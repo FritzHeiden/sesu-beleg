@@ -1,25 +1,27 @@
 class Article:
-
-    def __init__(self, id, version, content, date, source, title, url):
-        self._id = id
+    def __init__(self, article_id, version, content, date, source, title, url, words=None):
+        if words is None:
+            words = []
+        self._article_id = article_id
         self._version = version
         self._content = content
         self._date = date
         self._source = source
         self._title = title
         self._url = url
-        self._words = []
+        self._words = words
 
     def __str__(self) -> str:
         return "Article{{id: '{0}', version: '{1}', content: '{2}', " \
-               "date: '{3}', source: '{4}', title: '{5}', url: '{6}'}}"\
-            .format(self._id, self._version, self._content, self._date, self._source, self._title, self._url)
+               "date: '{3}', source: '{4}', title: '{5}', url: '{6}', words: '{7}'}}" \
+            .format(self._article_id, self._version, self._content, self._date, self._source, self._title, self._url,
+                    self._words)
 
-    def get_id(self):
-        return self._id
+    def get_article_id(self):
+        return self._article_id
 
-    def set_id(self, id):
-        self._id = id
+    def set_article_id(self, article_id):
+        self._article_id = article_id
 
     def get_version(self):
         return self._version
@@ -57,6 +59,7 @@ class Article:
     def set_url(self, url):
         self._url = url
 
+    # adds a word to the list if its not already there
     def add_word(self, word):
         if self._words.count(word.lower()) <= 0:
             self._words.append(word.lower())
@@ -69,5 +72,4 @@ class Article:
 
     def add_words(self, words):
         for word in words:
-            if self._words.count(word.lower()) <= 0:
-                self._words.append(word.lower())
+            self.add_word(word)
