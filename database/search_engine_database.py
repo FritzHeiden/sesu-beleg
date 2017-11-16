@@ -61,7 +61,8 @@ class SearchEngineDatabase:
                 "source": article.get_source(),
                 "title": article.get_title(),
                 "url": article.get_url(),
-                "words": article.get_words()}
+                "words": article.get_words(),
+                "stems": article.get_stems()}
 
     # create an article object based on an mongodb document
     @staticmethod
@@ -74,7 +75,8 @@ class SearchEngineDatabase:
         title = document["title"]
         url = document["url"]
         words = document["words"]
-        return Article(article_id, version, content, date, source, title, url, words)
+        stems = document["stems"]
+        return Article(article_id, version, content, date, source, title, url, words, stems)
 
     # create query that specifies the given article
     @staticmethod

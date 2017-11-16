@@ -1,7 +1,9 @@
 class Article:
-    def __init__(self, article_id, version, content, date, source, title, url, words=None):
+    def __init__(self, article_id, version, content, date, source, title, url, words=None, stems=None):
         if words is None:
             words = []
+        if stems is None:
+            stems = []
         self._article_id = article_id
         self._version = version
         self._content = content
@@ -10,12 +12,13 @@ class Article:
         self._title = title
         self._url = url
         self._words = words
+        self._stems = stems
 
     def __str__(self) -> str:
         return "Article{{id: '{0}', version: '{1}', content: '{2}', " \
-               "date: '{3}', source: '{4}', title: '{5}', url: '{6}', words: '{7}'}}" \
+               "date: '{3}', source: '{4}', title: '{5}', url: '{6}', words: '{7}', stems: '{8}'}}" \
             .format(self._article_id, self._version, self._content, self._date, self._source, self._title, self._url,
-                    self._words)
+                    self._words, self._stems)
 
     def get_article_id(self):
         return self._article_id
@@ -73,3 +76,17 @@ class Article:
     def add_words(self, words):
         for word in words:
             self.add_word(word)
+
+    def get_stems(self):
+        return self._stems
+
+    def set_stems(self, stems):
+        self._stems = stems
+
+    def add_stem(self, stem):
+        if self._stems.count(stem) <= 0:
+            self._stems.append(stem)
+
+    def add_stems(self, stems):
+        for stem in stems:
+            self.add_stem(stem)

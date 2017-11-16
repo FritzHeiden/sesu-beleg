@@ -2,6 +2,7 @@ from network.url_helper import UrlHelper
 from serialization.deserializer import Deserializer
 from analyse.word_analyser import WordAnalyser
 from database.search_engine_database import SearchEngineDatabase
+from analyse.stemmer import Stemmer
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
@@ -22,6 +23,8 @@ articles = Deserializer.deserialize_articles(article_xml)
 for article in articles:
     # analyse words from content and add them to the article object
     article.add_words(WordAnalyser.analyse_words(article.get_content()))
+    # create stems from words and add them to the article object
+    article.add_stems(Stemmer.get_stems(article.get_words()))
     # persist article in database
     database.insert_article(article)
 
