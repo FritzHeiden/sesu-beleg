@@ -1,8 +1,9 @@
-from network.url_helper import UrlHelper
-from serialization.deserializer import Deserializer
+from analyse.stemmer import Stemmer
+from analyse.counter import Counter
 from analyse.word_analyser import WordAnalyser
 from database.search_engine_database import SearchEngineDatabase
-from analyse.stemmer import Stemmer
+from network.url_helper import UrlHelper
+from serialization.deserializer import Deserializer
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
@@ -20,6 +21,8 @@ article_xml = UrlHelper.retrieve_url(test_data_url)
 # deserialize documents
 articles = Deserializer.deserialize_articles(article_xml)
 
+
+
 for article in articles:
     # analyse words from content and add them to the article object
     article.add_words(WordAnalyser.analyse_words(article.get_content()))
@@ -31,6 +34,8 @@ for article in articles:
 # get all article stored in database
 articles = database.get_articles()
 
+print(Counter.countArticles(articles));
+print(Counter.countWords(articles));
 # print articles
 for article in articles:
     print(article)
