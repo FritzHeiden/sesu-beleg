@@ -11,7 +11,15 @@ class Counter:
         di = {}
         for article in articles:
             for word in article._content.split():
-                di[word] = 1
-            for word in article._content.split():
-                di[word] = di.get(str(word)) + 1
+                if di.get(word) == None:
+                    di[word] = 1
+                else:
+                    di[word] = di.get(str(word)) + 1
+
         return di
+
+
+
+#di[word] = 1
+ #               for word in article._content.split():
+  #                  di[word] = di.get(str(word)) + 1
