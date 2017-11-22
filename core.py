@@ -33,9 +33,12 @@ for article in articles:
 
 # get all article stored in database
 articles = database.get_articles()
-
-print(Counter.countArticles(articles));
-print(Counter.countWords(articles));
+#anzahl der articel
+print(Counter.countArticles(articles))
+#anzahl der worte
+print(Counter.countWords(articles))
+#die x (= 5) häufigst auftretenden worte
+print(Counter.topWords(Counter.countWords(articles),5))
 # print articles
 for article in articles:
     print(article)
