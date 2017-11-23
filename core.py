@@ -1,14 +1,16 @@
+import sys
+
 from analyse.articles_analyser import ArticlesAnalyser
-from analyse.stemmer import Stemmer
 from analyse.counter import Counter
-from analyse.word_analyser import WordAnalyser
+from analyse.stemmer import Stemmer
+from analyse.text_analyser import TextAnalyser
 from database.search_engine_database import SearchEngineDatabase
 from network.url_helper import UrlHelper
 from serialization.deserializer import Deserializer
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
-# test_data_url = "http://daten.datenlabor-berlin.de/newspart1.xml"
+test_data_url = "http://daten.datenlabor-berlin.de/newspart1.xml"
 
 # mongodb connection information
 mongodb_host = "spadi8.f4.htw-berlin.de"
@@ -19,34 +21,153 @@ mongodb_db_name = "search_engine"
 # initialize database
 database = SearchEngineDatabase(mongodb_host, mongodb_port)
 
-# download xml documents
-article_xml = UrlHelper.retrieve_url(test_data_url)
-# deserialize documents
-articles = Deserializer.deserialize_articles_xml(article_xml)
+file = open("./stop_words", "r")
+text = file.read()
+file.close()
+text_split = text.split("\n")
+stop_words = []
+for line in text_split:
+    if line.startswith(";") is False:
+        stop_words.append(line.lower())
 
-for article in articles:
-    # analyse words from content and add them to the article object
-    article.add_words(WordAnalyser.analyse_words(article.get_content()))
-    # create stems from words and add them to the article object
-    article.add_stems(Stemmer.get_stems(article.get_words()))
-    # persist article in database
-    database.insert_article(article)
+TextAnalyser.stop_words = stop_words
 
-# get all article stored in database
-articles = database.get_articles()
 
-#anzahl der articel
-print(Counter.countArticles(articles))
-#anzahl der worte
-print(Counter.countWords(articles))
-#die x (= 5) häufigst auftretenden worte
-print(Counter.topWords(Counter.countWords(articles),5))
+def list_commands():
+    print("= Command List =")
+    print("h/help\t\t\t\t\t\t\t\tList all available commands")
+    print("l/list [<count> [<start_position>]]\tList a selection of articles")
+    print("w/words <article_id>\t\t\t\tList occurrences of words of an article")
+    print("sw/stopwords <article_id>\t\t\tList occurrences of stop words of an article")
+    print("t/top <top_count> <article_id>\t\tList top n occurrences of stop words of an article")
+    print("s/stats\t\t\t\t\t\t\t\tShow stats concerning all articles")
+    print("p/persist <url>\t\t\t\t\t\tPersists articles from URL")
+    print("q/quit\t\t\t\t\t\t\t\tQuit")
 
-print(Counter.countArticles(articles))
-print(Counter.countWords(articles))
 
-# print articles
-for article in articles:
-    print(article)
+def list_articles(count, start_position):
+    try:
+        count = int(count)
+    except ValueError:
+        count = 10
 
-print(ArticlesAnalyser.get_articles_statistic(articles))
+    try:
+        start_position = int(start_position)
+    except ValueError:
+        start_position = 0
+
+    if count is None or type(count) is not int:
+        raise Exception("Invalid value for count")
+    print("Showing articles {0} to {1}".format(start_position, start_position + count))
+    for article in database.get_articles_range(start_position, start_position + count):
+        print("id: {0}, version: {1}, date: {2}, source: {3}, title: {4}, url: {5}".format(
+            article.get_article_id(), article.get_version(), article.get_date(), article.get_source(),
+            article.get_title(), article.get_url()
+        ))
+
+
+def persist_articles(url):
+    # download xml documents
+    try:
+        article_xml = UrlHelper.retrieve_url(url)
+    except:
+        print("Invalid URL '{0}'!".format(url))
+        return
+
+    # deserialize documents
+    articles = Deserializer.deserialize_articles_xml(article_xml)
+
+    for article in articles:
+        # analyse words from content and add them to the article object
+        words = TextAnalyser.analyse_words(article.get_content())
+        article.set_words(Counter.count_words(words))
+
+        stop_words = TextAnalyser.analyse_stop_words(article.get_content())
+        article.set_stop_words(Counter.count_words(stop_words))
+
+        # create stems from words and add them to the article object
+        article.add_stems(Stemmer.get_stems(words))
+
+        # persist article in database
+        if database.insert_article(article) is False:
+            print("New article added: id: {0}, version: {1}, date: {2}, source: {3}, title: {4}, url: {5}".format(
+                article.get_article_id(), article.get_version(), article.get_date(), article.get_source(),
+                article.get_title(), article.get_url()
+            ))
+
+            articles_statistic = ArticlesAnalyser.get_article_statistic(article)
+            database.add_articles_statistic(articles_statistic)
+        else:
+            print("Article with id {0} already in database.".format(article.get_article_id()))
+
+
+def list_words(article_id):
+    article = database.get_article(article_id)
+    words = article.get_words()
+    for word in words:
+        print("{0}: {1}".format(word, words[word]))
+
+
+def list_stop_words(article_id):
+    article = database.get_article(article_id)
+    stop_words = article.get_stop_words()
+    for stop_word in stop_words:
+        print("{0}: {1}".format(stop_word, stop_words[stop_word]))
+
+
+def list_top_words(top, article_id):
+    try:
+        top = int(top)
+    except ValueError:
+        print("Usage: top <top_count> <article_id>")
+
+    article = database.get_article(article_id)
+    words = article.get_words()
+    top_words = Counter.top_words(words, top)
+    for top_word in top_words:
+        print("{0}: {1}".format(top_word, top_words[top_word]))
+
+
+def list_stats():
+    articles_statistic = database.get_articles_statistic()
+    print("= Articles Statistic =")
+    article_count = articles_statistic.get_article_count()
+    print("Article Count: {0}".format(article_count))
+    print("Top 10 Sources:")
+    sources = Counter.top_words(articles_statistic.get_sources(), 10)
+    for source in sources:
+        print("\t{0}: {1}".format(source, sources[source]))
+
+    print("Top 100 Words:")
+    words = Counter.top_words(articles_statistic.get_words(), 100)
+    for word in words:
+        print("\t{0}: {1}".format(word, words[word]))
+
+
+print("= Article Database =")
+print("Enter h or help to list commands")
+
+close_requested = False
+while close_requested is not True:
+    command = input("\n> ").lower().split()
+    for i in range(len(command), 4):
+        command.append("")
+
+    if command[0] == "h" or command[0] == "help":
+        list_commands()
+    elif command[0] == "q" or command[0] == "quit":
+        sys.exit(0)
+    elif command[0] == "l" or command[0] == "list":
+        list_articles(command[1], command[2])
+    elif command[0] == "p" or command[0] == "persist":
+        persist_articles(command[1])
+    elif command[0] == "w" or command[0] == "words":
+        list_words(command[1])
+    elif command[0] == "sw" or command[0] == "stopwords":
+        list_stop_words(command[1])
+    elif command[0] == "t" or command[0] == "top":
+        list_top_words(command[1], command[2])
+    elif command[0] == "s" or command[0] == "stats":
+        list_stats()
+    else:
+        print("Unknown command '{0}'. Enter h or help for command list".format(command))

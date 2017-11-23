@@ -1,6 +1,8 @@
 from data.article import Article
 import xml.etree.ElementTree as ElementTree
 
+from data.articles_statistic import ArticlesStatistic
+
 
 class Deserializer:
     # creates an article array from a xml
@@ -71,5 +73,20 @@ class Deserializer:
         title = article_json["title"]
         url = article_json["url"]
         words = article_json["words"]
+        stop_words = article_json["stop_words"]
         stems = article_json["stems"]
-        return Article(article_id, version, content, date, source, title, url, words, stems)
+        return Article(article_id, version, content, date, source, title, url, words, stems, stop_words)
+
+    @staticmethod
+    def deserialize_articles_json(articles_json):
+        articles = []
+        for article_json in articles_json:
+            articles.append(Deserializer.deserialize_article_json(article_json))
+        return articles
+
+    @staticmethod
+    def deserialize_articles_statistic(articles_statistic_json):
+        sources = articles_statistic_json["sources"]
+        words = articles_statistic_json["words"]
+        article_count = articles_statistic_json["article_count"]
+        return ArticlesStatistic(sources, words, article_count)

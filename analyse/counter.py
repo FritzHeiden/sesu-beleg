@@ -3,23 +3,24 @@ from collections import OrderedDict
 
 class Counter:
     @staticmethod
-    def countArticles(articles):  # zählt die anzahl der articel
+    def count_articles(articles):  # zählt die anzahl der articel
         return len(articles)
 
     @staticmethod
-    def countWords(articles):  # nimmt jedes wort und zählt es
+    def count_words(words):  # nimmt jedes wort und zählt es
         di = {}
-        for article in articles:  # durchlaufen der articel
-            for word in article._content.split():  # durchlaufen der wörter im content der articel
-                if di.get(word.lower()) == None:  # falls nicht vorhanden hinzufügen
-                    di[word.lower()] = 1
-                else:  # falls schon da +1
-                    di[word.lower()] = di.get(str(word.lower())) + 1
+        for word in words:  # durchlaufen der wörter im content der articel
+            if di.get(word.lower()) == None:  # falls nicht vorhanden hinzufügen
+                di[word.lower()] = 1
+            else:  # falls schon da +1
+                di[word.lower()] = di.get(str(word.lower())) + 1
 
         return di
 
     @staticmethod
-    def topWords(di, number=100):  # gibt häufigsten wörter zurück, number = anzahl
+    def top_words(di, number=100):  # gibt häufigsten wörter zurück, number = anzahl
+        if len(di) < number:
+            number = len(di)
         sortedDi = OrderedDict(sorted(di.items(), key=lambda t: t[1]))  # sortiert das angegebene dic
         dili = list(sortedDi.items())  # in liste umwandeln
         ausgabeDi = {}
@@ -31,11 +32,11 @@ class Counter:
 
     @staticmethod
     def count_article_sources(articles):
-        source_counts = {}
+        sources = {}
         for article in articles:
-            source_name = article.get_source()
-            if source_name not in source_counts:
-                source_counts[source_name] = 0
-            source_counts[source_name] = source_counts[source_name] + 1
+            source = article.get_source()
+            if source not in sources:
+                sources[source] = 0
+            sources[source] = sources[source] + 1
 
-        return source_counts
+        return sources
