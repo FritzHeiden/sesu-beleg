@@ -34,15 +34,18 @@ TextAnalyser.stop_words = stop_words
 
 
 def list_commands():
+    column_width = 40
     print("= Command List =")
-    print("h/help\t\t\t\t\t\t\t\tList all available commands")
-    print("l/list [<count> [<start_position>]]\tList a selection of articles")
-    print("w/words <article_id>\t\t\t\tList occurrences of words of an article")
-    print("sw/stopwords <article_id>\t\t\tList occurrences of stop words of an article")
-    print("t/top <top_count> <article_id>\t\tList top n occurrences of stop words of an article")
-    print("s/stats\t\t\t\t\t\t\t\tShow stats concerning all articles")
-    print("p/persist <url>\t\t\t\t\t\tPersists articles from URL")
-    print("q/quit\t\t\t\t\t\t\t\tQuit")
+    print("{0}{1}".format("h/help".ljust(column_width), "List all available commands"))
+    print("{0}{1}".format("l/list [<count> [<start_position>]]".ljust(column_width), "List a selection of articles"))
+    print("{0}{1}".format("w/words <article_id>".ljust(column_width), "List occurrences of words of an article"))
+    print("{0}{1}".format("sw/stopwords <article_id>".ljust(column_width),
+                          "List occurrences of stop words of an article"))
+    print("{0}{1}".format("t/top <top_count> <article_id>".ljust(column_width),
+                          "List top n occurrences of stop words of an article"))
+    print("{0}{1}".format("s/stats".ljust(column_width), "Show stats concerning all articles"))
+    print("{0}{1}".format("p/persist <url>".ljust(column_width), "Persists articles from URL"))
+    print("{0}{1}".format("q/quit".ljust(column_width), "Quit"))
 
 
 def list_articles(count, start_position):
@@ -133,7 +136,7 @@ def list_stats():
     if articles_statistic is None:
         print("No statistics so far.")
         return
-    
+
     print("= Articles Statistic =")
     article_count = articles_statistic.get_article_count()
     print("Article Count: {0}".format(article_count))
