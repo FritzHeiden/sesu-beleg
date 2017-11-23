@@ -1,6 +1,8 @@
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
-from data.article import Article
+
+from serialization.deserializer import Deserializer
+from serialization.serializer import Serializer
 
 
 class SearchEngineDatabase:
@@ -19,11 +21,12 @@ class SearchEngineDatabase:
         # get the db and collection to store our data in
         self._db = self._client["search_engine"]
         self._article_collection = self._db["articles"]
+        self._statistics_collection = self._db["statistics"]
 
     # inserts an article if its not present in the db
     def insert_article(self, article):
         # create document that is understood by mongodb
-        document = self.__serialize_article(article)
+        document = Serializer.serialize_article_json(article)
         # create a query which determines if documents is already in db
         query = self.__article_update_query(article)
         # execute query; if document is present, it is being updated; upsert true causes mongodb to insert article if
@@ -36,7 +39,7 @@ class SearchEngineDatabase:
         document = self._article_collection.find_one({"article_id": article_id})
         if document is not None:
             # deserialize and return if an article was returned
-            return self.__deserialize_article(document)
+            return Deserializer.deserialize_article_json(document)
         else:
             return None
 
@@ -47,38 +50,14 @@ class SearchEngineDatabase:
         articles = []
         for document in documents:
             # deserialize articles and add them to the array
-            articles.append(self.__deserialize_article(document))
+            articles.append(Deserializer.deserialize_article_json(document))
         # return all found articles
         return articles
 
-    # creates an document that is understandable by mongodb
-    @staticmethod
-    def __serialize_article(article):
-        return {"article_id": article.get_article_id(),
-                "version": article.get_version(),
-                "content": article.get_content(),
-                "date": article.get_date(),
-                "source": article.get_source(),
-                "title": article.get_title(),
-                "url": article.get_url(),
-                "words": article.get_words(),
-                "stems": article.get_stems()}
-
-    # create an article object based on an mongodb document
-    @staticmethod
-    def __deserialize_article(document):
-        article_id = document["article_id"]
-        version = document["version"]
-        content = document["content"]
-        date = document["date"]
-        source = document["source"]
-        title = document["title"]
-        url = document["url"]
-        words = document["words"]
-        stems = document["stems"]
-        return Article(article_id, version, content, date, source, title, url, words, stems)
 
     # create query that specifies the given article
     @staticmethod
     def __article_update_query(article):
         return {"article_id": article.get_article_id()}
+
+
