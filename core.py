@@ -130,6 +130,10 @@ def list_top_words(top, article_id):
 
 def list_stats():
     articles_statistic = database.get_articles_statistic()
+    if articles_statistic is None:
+        print("No statistics so far.")
+        return
+    
     print("= Articles Statistic =")
     article_count = articles_statistic.get_article_count()
     print("Article Count: {0}".format(article_count))
