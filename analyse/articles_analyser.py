@@ -33,6 +33,7 @@ class ArticlesAnalyser:
         # ToDo dubletten erkennen. min. ein band aus den signaturen muss mit einem band der referenz signatur
         # übereinstimmen. dann jaccard ähnlichkeit bestimmen. bei > 80% eintrag in duplicates[80], bei > 85% eintrag
         # in duplicates[85] und bei > 90% eintrag in duplicates[90] (article id des duplikats)
+        # siehe data.signature klasse
 
         return duplicates
 
@@ -49,7 +50,7 @@ class ArticlesAnalyser:
         article.add_stems(Stemmer.get_stems(words))
 
         # Generate Shingles from stop words
-        shingles = ShingleGenerator.generate_stop_word_shingles(article.get_content())
+        shingles = ShingleGenerator.generate_stop_word_shingles(article.get_content(), 5)
 
         # add shingles to shingle map in database
         database.add_shingles(shingles)
