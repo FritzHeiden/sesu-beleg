@@ -2,6 +2,7 @@ from data.article import Article
 import xml.etree.ElementTree as ElementTree
 
 from data.articles_statistic import ArticlesStatistic
+from data.signature import Signature
 
 
 class Deserializer:
@@ -90,3 +91,18 @@ class Deserializer:
         words = articles_statistic_json["words"]
         article_count = articles_statistic_json["article_count"]
         return ArticlesStatistic(sources, words, article_count)
+
+    @staticmethod
+    def deserialize_signature(signature_json):
+        article_id = signature_json["article_id"]
+        signatures = signature_json["signatures"]
+        return Signature(article_id, signatures)
+
+    @staticmethod
+    def deserialize_signatures(signatures_json):
+        signatures = []
+        for signature in signatures_json:
+            signatures.append(Deserializer.deserialize_signature(signature))
+
+        return signatures
+

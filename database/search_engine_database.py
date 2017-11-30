@@ -5,6 +5,7 @@ from pymongo.errors import ConnectionFailure
 
 from data.articles_statistic import ArticlesStatistic
 from data.hash_function import HashFunction
+from data.signature import Signature
 from serialization.deserializer import Deserializer
 from serialization.serializer import Serializer
 from tools.shingle_comparator import ShingleComparator
@@ -139,7 +140,6 @@ class SearchEngineDatabase:
     def get_hash_functions(self, functions_count):
         hash_parameters = self._meta_data_collection.find_one({"id": "hash_parameters"})
         if hash_parameters is None:
-            print("creating ...")
             hash_parameters = {"id": "hash_parameters", "parameters": {}}
             self._meta_data_collection.update({"id": "hash_parameters"}, hash_parameters, upsert=True)
 
@@ -188,9 +188,29 @@ class SearchEngineDatabase:
         return shingles_map["shingles"]
 
     def get_signatures(self):
-        # ToDo implement get_signatures
-        pass
+        signatures_json = self._meta_data_collection.find_one({"id": "signatures"})
+        if signatures_json is None:
+            return []
+
+        signatures = Deserializer.deserialize_signatures(signatures_json)
+
+        return signatures
 
     def add_signature(self, signature):
-        # ToDo implement add_signature
-        pass
+        signatures = self._meta_data_collection.find_one({"id": "signatures"})
+        if signatures is None:
+            signatures = {"id": "signatures", "signatures": []}
+            self._meta_data_collection.update({"id": "signatures"}, signatures, upsert=True)
+
+        signatures = signatures["signatures"]
+
+        found = False
+        for compare_signature in signatures:
+            if compare_signature.get_article_id() == signature.get_article_id():
+                found = True
+                break
+
+        if found is False:
+            self._meta_data_collection.update({"id": "signatures"},
+                                              {"$push": {"signatures": Serializer.serialize_signature(signature)}})
+

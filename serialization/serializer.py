@@ -18,3 +18,10 @@ class Serializer:
                 "sources": articles_statistic.get_sources(),
                 "words": articles_statistic.get_words(),
                 "article_count": articles_statistic.get_article_count()}
+
+    @staticmethod
+    def serialize_signature(signature):
+        return {
+            "article_id": signature.get_article_id(),
+            "signatures": signature.get_signature()
+        }
