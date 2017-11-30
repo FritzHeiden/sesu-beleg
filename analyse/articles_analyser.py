@@ -28,7 +28,17 @@ class ArticlesAnalyser:
 
     @staticmethod
     def get_duplicates(signatures, reference_signature):
+        simularity = 0.8
+        count = 0
         duplicates = {}
+        #http://mccormickml.com/2015/06/12/minhash-tutorial-with-python-code/ so wie ich das verstanden habe, müsste es so in der Art aussehen
+        #kp ich versteh das mit den signaturen immer noch nicht, auch mit Folie und anderen quellen ...
+        for i in (0,len(signatures)):
+            for a in (0,len(reference_signature)):
+                if (signatures[i] == signatures[a]):
+                    count += 1
+        if (count/len(signatures)>simularity):
+            duplicates.add(signatures.get_article_id)
 
         # ToDo dubletten erkennen. min. ein band aus den signaturen muss mit einem band der referenz signatur
         # übereinstimmen. dann jaccard ähnlichkeit bestimmen. bei > 80% eintrag in duplicates[80], bei > 85% eintrag

@@ -12,8 +12,6 @@ class ShingleGenerator:
     def generate_stop_word_shingles(text, shingle_length):
         shingles = []
         word_zeiger = 0
-        # ToDo ein array von shingles generieren, welche als erstes wort ein stoppwort haben
-        # stoppwörter befinden sich als array in der variablen stop_words
         # print(ShingleGenerator.stop_words)
         # print(text.split(" "))
         for word in text.split(" "):
