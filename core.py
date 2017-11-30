@@ -2,6 +2,8 @@ import sys
 
 from analyse.articles_analyser import ArticlesAnalyser
 from analyse.counter import Counter
+from analyse.min_hasher import MinHasher
+from analyse.shingle_generator import ShingleGenerator
 from analyse.stemmer import Stemmer
 from analyse.text_analyser import TextAnalyser
 from database.search_engine_database import SearchEngineDatabase
@@ -31,6 +33,7 @@ for line in text_split:
         stop_words.append(line.lower())
 
 TextAnalyser.stop_words = stop_words
+ShingleGenerator.stop_words = stop_words
 
 
 def list_commands():
@@ -81,18 +84,10 @@ def persist_articles(url):
     articles = Deserializer.deserialize_articles_xml(article_xml)
 
     for article in articles:
-        # analyse words from content and add them to the article object
-        words = TextAnalyser.analyse_words(article.get_content())
-        article.set_words(Counter.count_words(words))
+        if database.get_article(article.get_article_id()) is None:
+            article = ArticlesAnalyser.analyse_article(article, database)
 
-        stop_words = TextAnalyser.analyse_stop_words(article.get_content())
-        article.set_stop_words(Counter.count_words(stop_words))
-
-        # create stems from words and add them to the article object
-        article.add_stems(Stemmer.get_stems(words))
-
-        # persist article in database
-        if database.insert_article(article) is False:
+            # persist article in database
             print("New article added: id: {0}, version: {1}, date: {2}, source: {3}, title: {4}, url: {5}".format(
                 article.get_article_id(), article.get_version(), article.get_date(), article.get_source(),
                 article.get_title(), article.get_url()

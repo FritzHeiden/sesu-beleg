@@ -92,3 +92,23 @@ class SearchEngineDatabase:
             return None
 
         return Deserializer.deserialize_articles_statistic(articles_statistic_json)
+
+    def add_shingles(self, shingles):
+        # ToDo implement add_shingles
+        pass
+
+    def get_hash_functions(self, functions_count):
+        # ToDo implement get_hash_functions
+        pass
+
+    def get_shingle_map(self):
+        # ToDo implement get_shingle_map
+        pass
+
+    def get_signatures(self):
+        # ToDo implement get_signatures
+        pass
+
+    def add_signature(self, signature):
+        # ToDo implement add_signature
+        pass
