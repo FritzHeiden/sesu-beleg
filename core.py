@@ -5,6 +5,7 @@ from analyse.counter import Counter
 from analyse.min_hasher import MinHasher
 from analyse.shingle_generator import ShingleGenerator
 from analyse.stemmer import Stemmer
+from analyse.shingle_generator import ShingleGenerator
 from analyse.text_analyser import TextAnalyser
 from database.search_engine_database import SearchEngineDatabase
 from network.url_helper import UrlHelper
