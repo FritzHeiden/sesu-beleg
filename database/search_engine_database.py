@@ -1,7 +1,10 @@
+from random import randint
+
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 
 from data.articles_statistic import ArticlesStatistic
+from data.hash_function import HashFunction
 from serialization.deserializer import Deserializer
 from serialization.serializer import Serializer
 
@@ -23,6 +26,7 @@ class SearchEngineDatabase:
         self._db = self._client["search_engine"]
         self._article_collection = self._db["articles"]
         self._statistics_collection = self._db["statistics"]
+        self._meta_data_collection = self._db["meta"]
 
     # inserts an article if its not present in the db
     def insert_article(self, article):
@@ -94,16 +98,87 @@ class SearchEngineDatabase:
         return Deserializer.deserialize_articles_statistic(articles_statistic_json)
 
     def add_shingles(self, shingles):
-        # ToDo implement add_shingles
-        pass
+        shingles_map = self._meta_data_collection.find_one({"id": "shingles_map"})
+        if shingles_map is None:
+            shingles_map = {"id": "shingles_map", "shingles": {}}
+            self._meta_data_collection.update({"id": "shingles_map"}, shingles_map, upsert=True)
+
+        next_id = 1
+        while str(next_id) in shingles_map["shingles"]:
+            next_id += 1
+
+        for shingle in shingles:
+            found = False
+            for shingle_id in shingles_map["shingles"]:
+                compare_shingle = shingles_map["shingles"][shingle_id]
+                found = True
+                if len(compare_shingle) != len(shingle):
+                    found = False
+                else:
+                    for i in range(0, len(compare_shingle)):
+                        element1 = compare_shingle[i]
+                        element2 = shingle[i]
+                        if element1 != element2:
+                            found = False
+
+                if found:
+                    break
+
+            if found is True:
+                continue
+            self._meta_data_collection.update({"id": "shingles_map"}, {"$set": {"shingles." + str(next_id): shingle}})
+            next_id += 1
 
     def get_hash_functions(self, functions_count):
-        # ToDo implement get_hash_functions
-        pass
+        hash_parameters = self._meta_data_collection.find_one({"id": "hash_parameters"})
+        if hash_parameters is None:
+            print("creating ...")
+            hash_parameters = {"id": "hash_parameters", "parameters": {}}
+            self._meta_data_collection.update({"id": "hash_parameters"}, hash_parameters, upsert=True)
+
+        parameters = hash_parameters["parameters"]
+        if len(parameters) < functions_count:
+            next_id = 1
+            while str(next_id) in parameters:
+                next_id += 1
+
+            while len(parameters) < functions_count:
+                new_parameters = {}
+                found = False
+                while found is False:
+                    new_parameters = {
+                        "a": randint(0, 2**32-1),
+                        "b": randint(0, 2**32-1),
+                        "c": 4294967311
+                    }
+                    found = True
+                    for parameters_id in parameters:
+                        found = False
+                        for i in parameters[parameters_id]:
+                            parameter1 = parameters[parameters_id][i]
+                            parameter2 = new_parameters[i]
+                            if parameter1 != parameter2:
+                                found = True
+                        if found is False:
+                            break
+                parameters[next_id] = new_parameters
+                self._meta_data_collection.update({"id": "hash_parameters"},
+                                                  {"$set": {"parameters." + str(next_id): new_parameters}})
+                next_id += 1
+
+        hash_functions = []
+        for parameter_id in parameters:
+            hash_functions.append(
+                HashFunction(parameter_id, parameters[parameter_id]["a"], parameters[parameter_id]["b"],
+                             parameters[parameter_id]["c"]))
+
+        return hash_functions
 
     def get_shingle_map(self):
-        # ToDo implement get_shingle_map
-        pass
+        shingles_map = self._meta_data_collection.find_one({"id": "shingles_map"})
+        if shingles_map is None:
+            return {}
+        return shingles_map["shingles"]
 
     def get_signatures(self):
         # ToDo implement get_signatures

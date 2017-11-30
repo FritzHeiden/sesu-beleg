@@ -17,7 +17,6 @@ class Article:
         self._stems = stems
         self._stop_words = stop_words
 
-
     def __str__(self) -> str:
         return "Article{{id: '{0}', version: '{1}', content: '{2}', " \
                "date: '{3}', source: '{4}', title: '{5}', url: '{6}', words: '{7}', stems: '{8}', stop_words: '{9}'}}" \
