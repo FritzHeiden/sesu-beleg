@@ -55,12 +55,12 @@ class ArticlesAnalyser:
         # add shingles to shingle map in database
         database.add_shingles(shingles)
         # get shingle map from database
-        shingle_map = database.get_shingle_map()
+        shingles = database.get_shingle_ids(shingles)
         # get hash functions from database
         hash_functions = database.get_hash_functions(200)
 
         # generate min hash signature for current documents shingles
-        reference_signature = MinHasher.generate_min_hash(shingles, shingle_map, hash_functions)
+        reference_signature = MinHasher.generate_min_hash(shingles, hash_functions)
 
         # get all min hash signatures
         signatures = database.get_signatures()

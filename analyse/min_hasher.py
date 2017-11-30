@@ -1,6 +1,6 @@
 class MinHasher:
     @staticmethod
-    def generate_min_hash(shingles, shingle_map, hash_function_parameters):
+    def generate_min_hash(shingles, hash_function_parameters):
         # min hash dict
         min_hash = {}
         # ToDo min hash berechnen. jede hash funktion über die ids der übergebenen shingles aus der shingle map

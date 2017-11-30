@@ -7,6 +7,7 @@ from data.articles_statistic import ArticlesStatistic
 from data.hash_function import HashFunction
 from serialization.deserializer import Deserializer
 from serialization.serializer import Serializer
+from tools.shingle_comparator import ShingleComparator
 
 
 class SearchEngineDatabase:
@@ -111,16 +112,7 @@ class SearchEngineDatabase:
             found = False
             for shingle_id in shingles_map["shingles"]:
                 compare_shingle = shingles_map["shingles"][shingle_id]
-                found = True
-                if len(compare_shingle) != len(shingle):
-                    found = False
-                else:
-                    for i in range(0, len(compare_shingle)):
-                        element1 = compare_shingle[i]
-                        element2 = shingle[i]
-                        if element1 != element2:
-                            found = False
-
+                found = ShingleComparator.compare_shingles(compare_shingle, shingle)
                 if found:
                     break
 
@@ -128,6 +120,21 @@ class SearchEngineDatabase:
                 continue
             self._meta_data_collection.update({"id": "shingles_map"}, {"$set": {"shingles." + str(next_id): shingle}})
             next_id += 1
+
+    def get_shingle_ids(self, shingles):
+        shingles_map = self._meta_data_collection.find_one({"id": "shingles_map"})
+        if shingles_map is None:
+            return None
+
+        shingles_with_id = {}
+
+        for shingle in shingles:
+            for shingles_id in shingles_map["shingles"]:
+                compare_shingle = shingles_map["shingles"][shingles_id]
+                if ShingleComparator.compare_shingles(compare_shingle, shingle) is True:
+                    shingles_with_id[shingles_id] = compare_shingle
+
+        return shingles_with_id
 
     def get_hash_functions(self, functions_count):
         hash_parameters = self._meta_data_collection.find_one({"id": "hash_parameters"})
@@ -147,8 +154,8 @@ class SearchEngineDatabase:
                 found = False
                 while found is False:
                     new_parameters = {
-                        "a": randint(0, 2**32-1),
-                        "b": randint(0, 2**32-1),
+                        "a": randint(0, 2 ** 32 - 1),
+                        "b": randint(0, 2 ** 32 - 1),
                         "c": 4294967311
                     }
                     found = True
