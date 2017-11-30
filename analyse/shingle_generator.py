@@ -1,4 +1,3 @@
-
 class ShingleGenerator:
     file = open("./stop_words", "r")
     text = file.read()
@@ -15,19 +14,19 @@ class ShingleGenerator:
         word_zeiger = 0
         # ToDo ein array von shingles generieren, welche als erstes wort ein stoppwort haben
         # stoppwörter befinden sich als array in der variablen stop_words
-        #print(ShingleGenerator.stop_words)
-        #print(text.split(" "))
+        # print(ShingleGenerator.stop_words)
+        # print(text.split(" "))
         for word in text.split(" "):
             for stop_word in ShingleGenerator.stop_words:
-                if (word == stop_word):
-                    #print(word)
+                if word == stop_word:
+                    # print(word)
                     ele = []
-                    for i in range (0,shingle_length):
-                        if(word_zeiger+shingle_length < len(text.split(" "))):
-                            ele.append(text.split(" ")[word_zeiger+i])
+                    for i in range(0, shingle_length):
+                        if word_zeiger + shingle_length < len(text.split(" ")):
+                            ele.append(text.split(" ")[word_zeiger + i])
                     shingles.append(ele)
 
-            word_zeiger +=1
-        #print (shingles)
-        #print(len(shingles))
+            word_zeiger += 1
+        # print(shingles)
+        # print(len(shingles))
         return shingles
