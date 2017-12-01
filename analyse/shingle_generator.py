@@ -1,4 +1,6 @@
 class ShingleGenerator:
+
+    #stopwoerter auslesen
     file = open("./stop_words", "r")
     text = file.read()
     file.close()
@@ -9,6 +11,7 @@ class ShingleGenerator:
             stop_words.append(line.lower())
 
     @staticmethod
+    #gibt shingles eines strings zurück, mit gegebeneer shingle_length
     def generate_stop_word_shingles(text, shingle_length):
         shingles = []
         word_zeiger = 0
