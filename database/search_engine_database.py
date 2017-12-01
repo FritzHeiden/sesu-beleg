@@ -192,7 +192,7 @@ class SearchEngineDatabase:
         if signatures_json is None:
             return []
 
-        signatures = Deserializer.deserialize_signatures(signatures_json)
+        signatures = Deserializer.deserialize_signatures(signatures_json["signatures"])
 
         return signatures
 
@@ -202,7 +202,7 @@ class SearchEngineDatabase:
             signatures = {"id": "signatures", "signatures": []}
             self._meta_data_collection.update({"id": "signatures"}, signatures, upsert=True)
 
-        signatures = signatures["signatures"]
+        signatures = Deserializer.deserialize_signatures(signatures["signatures"])
 
         found = False
         for compare_signature in signatures:

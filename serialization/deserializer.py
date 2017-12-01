@@ -76,7 +76,8 @@ class Deserializer:
         words = article_json["words"]
         stop_words = article_json["stop_words"]
         stems = article_json["stems"]
-        return Article(article_id, version, content, date, source, title, url, words, stems, stop_words)
+        duplicates = article_json["duplicates"]
+        return Article(article_id, version, content, date, source, title, url, words, stems, stop_words, duplicates)
 
     @staticmethod
     def deserialize_articles_json(articles_json):
@@ -95,8 +96,8 @@ class Deserializer:
     @staticmethod
     def deserialize_signature(signature_json):
         article_id = signature_json["article_id"]
-        signatures = signature_json["signatures"]
-        return Signature(article_id, signatures)
+        signature = signature_json["signature"]
+        return Signature(article_id, signature)
 
     @staticmethod
     def deserialize_signatures(signatures_json):

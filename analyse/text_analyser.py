@@ -6,6 +6,7 @@ class TextAnalyser:
     word_validation_regex = re.compile("[a-zA-Zä-üÄ-Ü]+")
     # specify what parts of words we want to cut off using regex
     trim_regex = re.compile("[^a-zA-Zä-üÄ-Ü-]")
+    trim_text_regex = re.compile("[^a-zA-Zä-üÄ-Ü- ]")
     # define all words that are irrelevant
     stop_words = ["der", "die", "das", "ein", "eine", "aus", "dem", "mit", "bei", "von", "ist", "oder", "nun", "in",
                   "wie", "wir", "und", "ob", "to", "the", "zu", "ihr", "für", "nur", "vor", "im", "zur", "by", "um",
@@ -54,3 +55,7 @@ class TextAnalyser:
                 is_stop_word = True
                 break
         return is_stop_word
+
+    @staticmethod
+    def trim_text(text):
+        return re.sub(TextAnalyser.trim_text_regex, "", text)

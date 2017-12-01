@@ -28,24 +28,55 @@ class ArticlesAnalyser:
 
     @staticmethod
     def get_duplicates(signatures, reference_signature):
-        simularity = 0.8
-        count = 0
-        duplicates = {}
-        #http://mccormickml.com/2015/06/12/minhash-tutorial-with-python-code/ so wie ich das verstanden habe, müsste es so in der Art aussehen
-        #kp ich versteh das mit den signaturen immer noch nicht, auch mit Folie und anderen quellen ...
-        for i in (0,len(signatures)):
-            for a in (0,len(reference_signature)):
-                if (signatures[i] == signatures[a]):
-                    count += 1
-        if (count/len(signatures)>simularity):
-            duplicates.add(signatures.get_article_id)
+        similar_signatures = []
+        for signature in signatures:
+            if reference_signature.compare_straps(signature) is not None:
+                similar_signatures.append(signature)
 
-        # ToDo dubletten erkennen. min. ein band aus den signaturen muss mit einem band der referenz signatur
-        # übereinstimmen. dann jaccard ähnlichkeit bestimmen. bei > 80% eintrag in duplicates[80], bei > 85% eintrag
-        # in duplicates[85] und bei > 90% eintrag in duplicates[90] (article id des duplikats)
-        # siehe data.signature klasse
+        duplicates = {"80": [], "85": [], "90": []}
+        for signature in similar_signatures:
+            similar_values = []
+            all_values = []
+            for hash_id1 in signature.get_hash_ids():
+                value1 = signature.get_hash_value(hash_id1)
+                for hash_id2 in reference_signature.get_hash_ids():
+                    value2 = reference_signature.get_hash_value(hash_id2)
+                    if value1 == value2 and value1 not in similar_values:
+                        similar_values.append(value1)
+                    if value1 not in all_values:
+                        all_values.append(value1)
+                    if value2 not in all_values:
+                        all_values.append(value2)
+            similarity = len(similar_values) / len(all_values)
 
+            if similarity < 0.8:
+                continue
+            elif 0.8 <= similarity < 0.85:
+                duplicates["80"].append(signature.get_article_id())
+            elif 0.85 <= similarity < 0.9:
+                duplicates["85"].append(signature.get_article_id())
+            elif 0.9 <= similarity:
+                duplicates["90"].append(signature.get_article_id())
         return duplicates
+
+    # simularity = 0.8
+    # count = 0
+    # duplicates = {}
+    # http://mccormickml.com/2015/06/12/minhash-tutorial-with-python-code/ so wie ich das verstanden habe, müsste es so in der Art aussehen
+    # kp ich versteh das mit den signaturen immer noch nicht, auch mit Folie und anderen quellen ...
+    # for i in (0, len(signatures)):
+    #     for a in (0, len(reference_signature)):
+    #         if (signatures[i] == signatures[a]):
+    #             count += 1
+    # if (count / len(signatures) > simularity):
+    #     duplicates.add(signatures.get_article_id)
+
+    # ToDo dubletten erkennen. min. ein band aus den signaturen muss mit einem band der referenz signatur
+    # übereinstimmen. dann jaccard ähnlichkeit bestimmen. bei > 80% eintrag in duplicates[80], bei > 85% eintrag
+    # in duplicates[85] und bei > 90% eintrag in duplicates[90] (article id des duplikats)
+    # siehe data.signature klasse
+
+    # return {}
 
     @staticmethod
     def analyse_article(article=None, database=None):
@@ -60,7 +91,7 @@ class ArticlesAnalyser:
         article.add_stems(Stemmer.get_stems(words))
 
         # Generate Shingles from stop words
-        shingles = ShingleGenerator.generate_stop_word_shingles(article.get_content(), 5)
+        shingles = ShingleGenerator.generate_stop_word_shingles(TextAnalyser.trim_text(article.get_content()), 5)
 
         # add shingles to shingle map in database
         database.add_shingles(shingles)
@@ -70,17 +101,16 @@ class ArticlesAnalyser:
         hash_functions = database.get_hash_functions(200)
 
         # generate min hash signature for current documents shingles
-        reference_signature = MinHasher.generate_min_hash(shingles, hash_functions)
+        reference_signature = MinHasher.generate_min_hash(article.get_article_id(), shingles, hash_functions)
 
         # get all min hash signatures
         signatures = database.get_signatures()
 
         # determine duplicates
         duplicates = ArticlesAnalyser.get_duplicates(signatures, reference_signature)
+        article.set_duplicates(duplicates)
 
         # add min hash signature of current document to signature index
         database.add_signature(reference_signature)
-
-        # ToDo add duplicate references to article
 
         return article

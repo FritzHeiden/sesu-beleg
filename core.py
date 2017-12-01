@@ -82,7 +82,7 @@ def persist_articles(url):
     articles = Deserializer.deserialize_articles_xml(article_xml)
 
     for article in articles:
-        # if database.get_article(article.get_article_id()) is None:
+        if database.get_article(article.get_article_id()) is None:
             article = ArticlesAnalyser.analyse_article(article, database)
 
             # persist article in database
@@ -90,13 +90,12 @@ def persist_articles(url):
                 article.get_article_id(), article.get_version(), article.get_date(), article.get_source(),
                 article.get_title(), article.get_url()
             ))
-            print (ShingleGenerator.generate_stop_word_shingles(article.get_content(),3))
 
             articles_statistic = ArticlesAnalyser.get_article_statistic(article)
-            # database.insert_article(article)
-            # database.add_articles_statistic(articles_statistic)
-        # else:
-        #     print("Article with id {0} already in database.".format(article.get_article_id()))
+            database.insert_article(article)
+            database.add_articles_statistic(articles_statistic)
+        else:
+            print("Article with id {0} already in database.".format(article.get_article_id()))
 
 
 def list_words(article_id):

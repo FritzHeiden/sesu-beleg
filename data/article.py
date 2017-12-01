@@ -1,11 +1,14 @@
 class Article:
-    def __init__(self, article_id, version, content, date, source, title, url, words=None, stems=None, stop_words=None):
+    def __init__(self, article_id, version, content, date, source, title, url, words=None, stems=None, stop_words=None,
+                 duplicates=None):
         if words is None:
             words = {}
         if stems is None:
             stems = []
         if stop_words is None:
             stop_words = {}
+        if duplicates is None:
+            duplicates = {}
         self._article_id = article_id
         self._version = version
         self._content = content
@@ -16,6 +19,7 @@ class Article:
         self._words = words
         self._stems = stems
         self._stop_words = stop_words
+        self._duplicates = duplicates
 
     def __str__(self) -> str:
         return "Article{{id: '{0}', version: '{1}', content: '{2}', " \
@@ -99,3 +103,9 @@ class Article:
 
     def get_stop_words(self):
         return self._stop_words
+
+    def set_duplicates(self, duplicates):
+        self._duplicates = duplicates
+
+    def get_duplicates(self):
+        return self._duplicates
