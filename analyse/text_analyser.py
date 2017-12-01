@@ -58,4 +58,8 @@ class TextAnalyser:
 
     @staticmethod
     def trim_text(text):
-        return re.sub(TextAnalyser.trim_text_regex, "", text)
+        try:
+            text = re.sub(TextAnalyser.trim_text_regex, "", str(text))
+        except:
+            print("Failed to trim article.")
+        return text
