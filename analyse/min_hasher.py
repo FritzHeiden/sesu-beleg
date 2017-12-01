@@ -12,9 +12,12 @@ class MinHasher:
         ordered_shingles = OrderedDict(sorted(shingles.items()))
 
         for hash_function in hash_functions:
-            min_value = hash_function.calculate(int(next(iter(ordered_shingles))))
+            min_value = None
             for shingle_id in ordered_shingles:
-                min_value = min(hash_function.calculate(int(shingle_id)), min_value)
+                if min_value is None:
+                    min_value = hash_function.calculate(int(shingle_id))
+                else:
+                    min_value = min(hash_function.calculate(int(shingle_id)), min_value)
             signature.add_hash_value(math.floor((int(hash_function.get_id()) - 1) / 20), hash_function.get_id(), min_value)
 
 
