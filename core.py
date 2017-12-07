@@ -49,19 +49,28 @@ def list_commands():
     print("{0}{1}".format("s/stats".ljust(column_width), "Show stats concerning all articles"))
     print("{0}{1}".format("p/persist <url>".ljust(column_width), "Persists articles from URL"))
     print("{0}{1}".format("q/quit".ljust(column_width), "Quit"))
-    eins = []
-    zwei = []
-    for article in database.get_articles_range(1, 2):
-        print(article.get_content())
-        for shingle in ShingleGenerator.generate_stop_word_shingles(article.get_content(),5):
+
+    i = 1
+    for article in database.get_articles_range(i, 4):
+        x = i+1
+        eins = []
+        #print(article.get_content())
+        for shingle in ShingleGenerator.generate_stop_word_shingles(article.get_content(), 5):
             eins.append(Stemmer.get_stems(shingle))
+        for article_v in database.get_articles_range(x, 4+1):
+            zwei = []
+            #print(article_v.get_content())
+            for shingle_v in ShingleGenerator.generate_stop_word_shingles(article_v.get_content(), 5):
+                zwei.append(Stemmer.get_stems(shingle_v))
+            Dublette.shingledublette(eins, zwei)
+            #print("_________")
+        i +=1
+
+
         #print(ShingleGenerator.generate_stop_word_shingles(article.get_content(),5))
 
-    for article in database.get_articles_range(2, 3):
-        print(article.get_content())
-        for shingle in ShingleGenerator.generate_stop_word_shingles(article.get_content(),5):
-            zwei.append(Stemmer.get_stems(shingle))
-    Dublette.shingledublette(eins,zwei)
+
+
 
 def list_articles(count, start_position):
     try:
