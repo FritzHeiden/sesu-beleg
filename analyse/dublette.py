@@ -1,6 +1,7 @@
 class Dublette:
 
     @staticmethod
+    #vergleicht zwei arrays mit shingles miteinander auf % und gibt diese aus
     def shingledublette(array1,array2):
         count = 0
         for shingle in array1:
