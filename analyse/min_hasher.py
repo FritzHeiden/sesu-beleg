@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 import math
 
 from data.signature import Signature
@@ -9,15 +7,14 @@ class MinHasher:
     @staticmethod
     def generate_min_hash(article_id, shingles, hash_functions):
         signature = Signature(article_id)
-        ordered_shingles = OrderedDict(sorted(shingles.items()))
 
         for hash_function in hash_functions:
             min_value = None
-            for shingle_id in ordered_shingles:
+            for shingle in shingles:
                 if min_value is None:
-                    min_value = hash_function.calculate(int(shingle_id))
+                    min_value = hash_function.calculate(shingle["id"])
                 else:
-                    min_value = min(hash_function.calculate(int(shingle_id)), min_value)
+                    min_value = min(hash_function.calculate(shingle["id"]), min_value)
             signature.add_hash_value(math.floor((int(hash_function.get_id()) - 1) / 20), hash_function.get_id(), min_value)
 
 
@@ -28,3 +25,6 @@ class MinHasher:
 
 
         return signature
+
+
+

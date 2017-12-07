@@ -1,16 +1,19 @@
-import requests
-import math
 import datetime
+import math
 import os
+
+import requests
+
 
 class UrlHelper:
     @staticmethod
     def __bytes_to_megabytes(bytes):
-        return math.floor(bytes/10000)/100
+        return math.floor(bytes / 10000) / 100
 
     @staticmethod
     def __get_current_timestamp():
         return '{:%Y-%m-%d_%H:%M:%S}'.format(datetime.datetime.now())
+
     # download and decode content from a specific url
     @staticmethod
     def retrieve_url(url):
@@ -31,7 +34,7 @@ class UrlHelper:
             response = requests.get(url, headers=headers)
             file.write(response.content)
             print("Download progress: {0}% ({1}/{2}MB)".format(
-                math.floor(end / content_length * 10000)/100,
+                math.floor(end / content_length * 10000) / 100,
                 UrlHelper.__bytes_to_megabytes(end),
                 UrlHelper.__bytes_to_megabytes(content_length)
             ))

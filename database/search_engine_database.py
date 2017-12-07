@@ -29,6 +29,8 @@ class SearchEngineDatabase:
         self._article_collection = self._db["articles"]
         self._statistics_collection = self._db["statistics"]
         self._meta_data_collection = self._db["meta"]
+        self._shingles_collection = self._db["shingles"]
+        self._counters_collection = self._db["counters"]
 
     # inserts an article if its not present in the db
     def insert_article(self, article):
@@ -100,40 +102,39 @@ class SearchEngineDatabase:
         return Deserializer.deserialize_articles_statistic(articles_statistic_json)
 
     def add_shingles(self, shingles):
-        shingles_map = self._meta_data_collection.find_one({"id": "shingles_map"})
-        if shingles_map is None:
-            shingles_map = {"id": "shingles_map", "shingles": {}}
-            self._meta_data_collection.update({"id": "shingles_map"}, shingles_map, upsert=True)
-
-        next_id = 1
-        while str(next_id) in shingles_map["shingles"]:
-            next_id += 1
-
         for shingle in shingles:
-            found = False
-            for shingle_id in shingles_map["shingles"]:
-                compare_shingle = shingles_map["shingles"][shingle_id]
-                found = ShingleComparator.compare_shingles(compare_shingle, shingle)
-                if found:
-                    break
-
-            if found is True:
+            if self._shingles_collection.find_one({"shingle": shingle}) is not None:
                 continue
-            self._meta_data_collection.update({"id": "shingles_map"}, {"$set": {"shingles." + str(next_id): shingle}})
-            next_id += 1
+            self.increase_counter("shingle_id")
+            shingle_id = self.get_counter("shingle_id")
+            self._shingles_collection.update({"shingle": shingle},
+                                             {"shingle": shingle, "id": shingle_id}, upsert=True)
+
+    def increase_counter(self, counter_name):
+        if self._counters_collection.find_one({"_id": counter_name}) is None:
+            self._counters_collection.insert_one({"_id": counter_name, "seq": 1})
+        else:
+            self._counters_collection.update({"_id": counter_name}, {"$inc": {"seq": 1}})
+
+    def get_counter(self, counter_name):
+        counter = self._counters_collection.find_one({"_id": counter_name})
+        if counter is None:
+            return 0
+        else:
+            counter = counter["seq"]
+            if counter is None:
+                return 0
+            else:
+                return counter
 
     def get_shingle_ids(self, shingles):
-        shingles_map = self._meta_data_collection.find_one({"id": "shingles_map"})
-        if shingles_map is None:
-            return None
-
-        shingles_with_id = {}
+        shingles_with_id = []
 
         for shingle in shingles:
-            for shingles_id in shingles_map["shingles"]:
-                compare_shingle = shingles_map["shingles"][shingles_id]
-                if ShingleComparator.compare_shingles(compare_shingle, shingle) is True:
-                    shingles_with_id[shingles_id] = compare_shingle
+            entry = self._shingles_collection.find_one({"shingle": shingle})
+            if entry is None:
+                continue
+            shingles_with_id.append({"shingle": shingle, "id": entry["id"]})
 
         return shingles_with_id
 
@@ -213,4 +214,3 @@ class SearchEngineDatabase:
         if found is False:
             self._meta_data_collection.update({"id": "signatures"},
                                               {"$push": {"signatures": Serializer.serialize_signature(signature)}})
-

@@ -4,6 +4,7 @@ from analyse.shingle_generator import ShingleGenerator
 from analyse.stemmer import Stemmer
 from analyse.text_analyser import TextAnalyser
 from data.articles_statistic import ArticlesStatistic
+from evaluation.timer import Timer
 
 
 class ArticlesAnalyser:
@@ -80,37 +81,65 @@ class ArticlesAnalyser:
 
     @staticmethod
     def analyse_article(article=None, database=None):
+        file = open("./times.csv", "a")
+        timer = Timer()
+        timer.start("total")
+
         # analyse words from content and add them to the article object
+        timer.start("words")
         words = TextAnalyser.analyse_words(article.get_content())
         article.set_words(Counter.count_words(words))
 
         stop_words = TextAnalyser.analyse_stop_words(article.get_content())
         article.set_stop_words(Counter.count_words(stop_words))
+        file.write("{0};".format(timer.stop("words")))
+        print("Getting words: {0}".format(timer.get("words")))
 
         # create stems from words and add them to the article object
+        timer.start("stems")
         article.add_stems(Stemmer.get_stems(words))
+        file.write("{0};".format(timer.stop("stems")))
+        print("Generating stems: {0}".format(timer.get("stems")))
 
         # Generate Shingles from stop words
+        timer.start("shingles")
         shingles = ShingleGenerator.generate_stop_word_shingles(TextAnalyser.trim_text(article.get_content()), 5)
+        shingles = Stemmer.get_shingle_stems(shingles)
+        file.write("{0};".format(timer.stop("shingles")))
+        print("Generating shingles: {0}".format(timer.get("shingles")))
 
         # add shingles to shingle map in database
+        timer.start("map")
         database.add_shingles(shingles)
         # get shingle map from database
         shingles = database.get_shingle_ids(shingles)
+        file.write("{0};".format(timer.stop("map")))
+        print("Adding to shingles map: {0}".format(timer.get("map")))
+
         # get hash functions from database
         hash_functions = database.get_hash_functions(200)
 
         # generate min hash signature for current documents shingles
+        timer.start("minhashing")
         reference_signature = MinHasher.generate_min_hash(article.get_article_id(), shingles, hash_functions)
+        file.write("{0};".format(timer.stop("minhashing")))
+        print("Min Hashing signatures: {0}".format(timer.get("minhashing")))
 
         # get all min hash signatures
         signatures = database.get_signatures()
 
         # determine duplicates
+        timer.start("dups")
         duplicates = ArticlesAnalyser.get_duplicates(signatures, reference_signature)
+        print(duplicates)
         article.set_duplicates(duplicates)
+        file.write("{0};".format(timer.stop("dups")))
+        print("Determining duplicates: {0}".format(timer.get("dups")))
 
         # add min hash signature of current document to signature index
         database.add_signature(reference_signature)
 
+        file.write("{0}\n".format(timer.stop("total")))
+        print("Total time: {0}\n".format(timer.get("total")))
+        file.close()
         return article

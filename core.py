@@ -81,15 +81,19 @@ def persist_articles(url):
     # deserialize documents
     articles = Deserializer.deserialize_articles_xml(article_xml)
 
+    count = 1
+
     for article in articles:
         if database.get_article(article.get_article_id()) is None:
+            print("Persisting article #{0}".format(count))
             article = ArticlesAnalyser.analyse_article(article, database)
+            count += 1
 
             # persist article in database
-            print("New article added: id: {0}, version: {1}, date: {2}, source: {3}, title: {4}, url: {5}".format(
-                article.get_article_id(), article.get_version(), article.get_date(), article.get_source(),
-                article.get_title(), article.get_url()
-            ))
+            # print("New article added: id: {0}, version: {1}, date: {2}, source: {3}, title: {4}, url: {5}".format(
+            #     article.get_article_id(), article.get_version(), article.get_date(), article.get_source(),
+            #     article.get_title(), article.get_url()
+            # ))
 
             articles_statistic = ArticlesAnalyser.get_article_statistic(article)
             database.insert_article(article)

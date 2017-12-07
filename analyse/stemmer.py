@@ -9,6 +9,12 @@ class Stemmer:
             list[i] = stemmer.stem(list[i])  # stemmen der liste
         return list  # rueckgabe der liste
 
+    @staticmethod
+    def get_shingle_stems(shingles):
+        for shingle in shingles:
+            shingle = Stemmer.get_stems(shingle)
+        return shingles
+
 ###### Ab Hier nur zum Testen
 # b = ['caresses', 'flies', 'dies', 'mules', 'denied',
 #    'died', 'agreed', 'owned', 'humbled', 'sized',
