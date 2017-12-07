@@ -7,6 +7,8 @@ from analyse.text_analyser import TextAnalyser
 from database.search_engine_database import SearchEngineDatabase
 from network.url_helper import UrlHelper
 from serialization.deserializer import Deserializer
+from analyse.stemmer import Stemmer
+from analyse.dublette import Dublette
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
@@ -47,7 +49,19 @@ def list_commands():
     print("{0}{1}".format("s/stats".ljust(column_width), "Show stats concerning all articles"))
     print("{0}{1}".format("p/persist <url>".ljust(column_width), "Persists articles from URL"))
     print("{0}{1}".format("q/quit".ljust(column_width), "Quit"))
+    eins = []
+    zwei = []
+    for article in database.get_articles_range(1, 2):
+        print(article.get_content())
+        for shingle in ShingleGenerator.generate_stop_word_shingles(article.get_content(),5):
+            eins.append(Stemmer.get_stems(shingle))
+        #print(ShingleGenerator.generate_stop_word_shingles(article.get_content(),5))
 
+    for article in database.get_articles_range(2, 3):
+        print(article.get_content())
+        for shingle in ShingleGenerator.generate_stop_word_shingles(article.get_content(),5):
+            zwei.append(Stemmer.get_stems(shingle))
+    Dublette.shingledublette(eins,zwei)
 
 def list_articles(count, start_position):
     try:
