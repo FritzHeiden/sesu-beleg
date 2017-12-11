@@ -50,21 +50,21 @@ def list_commands():
     print("{0}{1}".format("p/persist <url>".ljust(column_width), "Persists articles from URL"))
     print("{0}{1}".format("q/quit".ljust(column_width), "Quit"))
 
-    i = 1
-    for article in database.get_articles_range(i, 4):
-        x = i+1
-        eins = []
+    #i = 1
+    #for article in database.get_articles_range(i, 4):
+        #x = i+1
+        #eins = []
         #print(article.get_content())
-        for shingle in ShingleGenerator.generate_stop_word_shingles(article.get_content(), 5):
-            eins.append(Stemmer.get_stems(shingle))
-        for article_v in database.get_articles_range(x, 4+1):
-            zwei = []
+        #for shingle in ShingleGenerator.generate_stop_word_shingles(article.get_content(), 5):
+            #eins.append(Stemmer.get_stems(shingle))
+        #for article_v in database.get_articles_range(x, 4+1):
+            #zwei = []
             #print(article_v.get_content())
-            for shingle_v in ShingleGenerator.generate_stop_word_shingles(article_v.get_content(), 5):
-                zwei.append(Stemmer.get_stems(shingle_v))
-            Dublette.shingledublette(eins, zwei)
+            #for shingle_v in ShingleGenerator.generate_stop_word_shingles(article_v.get_content(), 5):
+                #zwei.append(Stemmer.get_stems(shingle_v))
+            #Dublette.shingledublette(eins, zwei)
             #print("_________")
-        i +=1
+        #i +=1
 
 
         #print(ShingleGenerator.generate_stop_word_shingles(article.get_content(),5))
@@ -167,7 +167,9 @@ def list_stats():
     for word in words:
         print("\t{0}: {1}".format(word, words[word]))
 
-
+#meine Testmethode um sachen zu testen
+def leons_test_methode():
+    print ("meins")
 print("= Article Database =")
 print("Enter h or help to list commands")
 
@@ -193,5 +195,7 @@ while close_requested is not True:
         list_top_words(command[1], command[2])
     elif command[0] == "s" or command[0] == "stats":
         list_stats()
+    elif command[0] == "leon":
+        leons_test_methode()
     else:
         print("Unknown command '{0}'. Enter h or help for command list".format(command))
