@@ -9,6 +9,7 @@ from network.url_helper import UrlHelper
 from serialization.deserializer import Deserializer
 from analyse.stemmer import Stemmer
 from analyse.dublette import Dublette
+from analyse.inverted import Inverted
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
@@ -169,7 +170,12 @@ def list_stats():
 
 #meine Testmethode um sachen zu testen
 def leons_test_methode():
-    print ("meins")
+    articles = []
+    for article in database.get_articles_range(1, 4):
+        articles.append(article)
+    Inverted.inverted_File(articles)
+
+
 print("= Article Database =")
 print("Enter h or help to list commands")
 
