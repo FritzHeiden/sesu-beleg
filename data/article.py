@@ -1,6 +1,8 @@
 class Article:
     def __init__(self, article_id, version, content, date, source, title, url, words=None, stems=None, stop_words=None,
-                 duplicates=None):
+                 duplicates=None, inverted = None):
+        if words is None:
+            inverted = {}
         if words is None:
             words = {}
         if stems is None:
@@ -20,12 +22,13 @@ class Article:
         self._stems = stems
         self._stop_words = stop_words
         self._duplicates = duplicates
+        self._inverted = inverted
 
     def __str__(self) -> str:
         return "Article{{id: '{0}', version: '{1}', content: '{2}', " \
-               "date: '{3}', source: '{4}', title: '{5}', url: '{6}', words: '{7}', stems: '{8}', stop_words: '{9}'}}" \
+               "date: '{3}', source: '{4}', title: '{5}', url: '{6}', words: '{7}', stems: '{8}', stop_words: '{9}', inverted: '{10}'}}" \
             .format(self._article_id, self._version, self._content, self._date, self._source, self._title, self._url,
-                    self._words, self._stems, self._stop_words)
+                    self._words, self._stems, self._stop_words, self._inverted)
 
     def get_article_id(self):
         return self._article_id
@@ -90,6 +93,7 @@ class Article:
     def set_stems(self, stems):
         self._stems = stems
 
+
     def add_stem(self, stem):
         if self._stems.count(stem) <= 0:
             self._stems.append(stem)
@@ -109,3 +113,9 @@ class Article:
 
     def get_duplicates(self):
         return self._duplicates
+
+    def set_inverted(self, inverted):
+        self._inverted = inverted
+
+    def get_inverted(self):
+        return self._inverted

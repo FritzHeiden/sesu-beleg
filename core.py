@@ -172,8 +172,9 @@ def list_stats():
 def leons_test_methode():
     articles = []
     for article in database.get_articles_range(1, 4):
-        articles.append(article)
-    Inverted.inverted_File(articles)
+        article.set_inverted(Inverted.inverted_File(article))
+        print(article.get_inverted())
+
 
 
 print("= Article Database =")

@@ -2,8 +2,10 @@ from analyse.counter import Counter
 from analyse.min_hasher import MinHasher
 from analyse.shingle_generator import ShingleGenerator
 from analyse.stemmer import Stemmer
+from analyse.inverted import Inverted
 from analyse.text_analyser import TextAnalyser
 from data.articles_statistic import ArticlesStatistic
+
 
 
 class ArticlesAnalyser:
@@ -90,27 +92,30 @@ class ArticlesAnalyser:
         # create stems from words and add them to the article object
         article.add_stems(Stemmer.get_stems(words))
 
+        #create inverted file
+        article.set_inverted(Inverted.inverted_File(article))
+
         # Generate Shingles from stop words
-        shingles = ShingleGenerator.generate_stop_word_shingles(TextAnalyser.trim_text(article.get_content()), 5)
+        #shingles = ShingleGenerator.generate_stop_word_shingles(TextAnalyser.trim_text(article.get_content()), 5)
 
         # add shingles to shingle map in database
-        database.add_shingles(shingles)
+        #database.add_shingles(shingles)
         # get shingle map from database
-        shingles = database.get_shingle_ids(shingles)
+        #shingles = database.get_shingle_ids(shingles)
         # get hash functions from database
-        hash_functions = database.get_hash_functions(200)
+        #hash_functions = database.get_hash_functions(200)
 
         # generate min hash signature for current documents shingles
-        reference_signature = MinHasher.generate_min_hash(article.get_article_id(), shingles, hash_functions)
+        #reference_signature = MinHasher.generate_min_hash(article.get_article_id(), shingles, hash_functions)
 
         # get all min hash signatures
-        signatures = database.get_signatures()
+        #signatures = database.get_signatures()
 
         # determine duplicates
-        duplicates = ArticlesAnalyser.get_duplicates(signatures, reference_signature)
-        article.set_duplicates(duplicates)
+        #duplicates = ArticlesAnalyser.get_duplicates(signatures, reference_signature)
+        #article.set_duplicates(duplicates)
 
         # add min hash signature of current document to signature index
-        database.add_signature(reference_signature)
+        #database.add_signature(reference_signature)
 
         return article
