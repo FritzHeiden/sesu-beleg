@@ -106,8 +106,14 @@ class BooleanRetrieval:
                     find_article.append(article.get_article_id())
         return find_article
 
-    def NEAR (word_list, articles, art_ids, near):
+    def NEAR (word_list, articles, art_ids, near):#, inverted_index):
         find_article = []
+
+        #for word in word_list:
+         #   for art_id in art_ids:
+          #      for pos in inverted_index[(word, art_id)]:
+
+
 
         for article in articles:
             print(art_ids)
