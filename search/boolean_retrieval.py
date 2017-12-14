@@ -38,6 +38,8 @@ class BooleanRetrieval:
                     hit_articels.append(BooleanRetrieval.AND(search_words, articles)) # wird nicht funktionieren
                 elif operator == "OR":
                     hit_articels.append(BooleanRetrieval.OR(search_words, articles))
+                elif operator == "AND_NOT":
+                    hit_articels.append(BooleanRetrieval.AND_NOT(search_words, articles))
                 elif operator == "NEAR":
                     print("NEAR_METHODE")
                 else:
@@ -79,6 +81,7 @@ class BooleanRetrieval:
                     if is_word_in_article_counter == found_all_word_in_article:
                         find_article.append(article.get_article_id())
         return find_article
+
     @staticmethod
     def OR (word_list, articles):
         find_article = []
@@ -102,4 +105,22 @@ class BooleanRetrieval:
                 if counter == len(word_list) and is_word_in_article_counter == 1:
                     print("lol")
                     find_article.append(article.get_article_id())
+        return find_article
+
+    @staticmethod
+    def AND_NOT(word_list, articles):
+        find_article = []
+        # for word in word_list:
+        #   if TextAnalyser.is_stop_word(word.lower()):
+        #        break;
+        # Stemmer.get_stems(word_list)
+
+        for article in articles:
+            print (article.get_stems())
+            print(word_list[0])
+            print (word_list[1])
+            if word_list[0] in article.get_stems() and word_list[1] not in article.get_stems():
+                find_article.append(article.get_article_id())
+
+
         return find_article
