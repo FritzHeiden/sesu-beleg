@@ -191,12 +191,15 @@ def emils_test_methode():
     #print(articles[1].get_inverted_index())
     text = "cameron AND gescheitert"
     text2 = "bitt OR parteitag"
+    text3 = "comment near the"
 
     inverted_index = Inverted.inverted_index_all(articles)
     a = BooleanRetrieval.bool_operator(text, articles, inverted_index)
     b = BooleanRetrieval.bool_operator(text2, articles, inverted_index)
+    c = BooleanRetrieval.bool_operator(text3, articles, inverted_index, 20)
     print (a)
     print (b)
+    print (c)
 
     print(inverted_index)
 
