@@ -171,11 +171,22 @@ def list_stats():
         print("\t{0}: {1}".format(word, words[word]))
 
 
-def bool_calc(text):
-    articles = database.get_articles()
-    inv_index = Inverted.inverted_index_all(articles)
+def bool_calc():
 
-    print(BooleanRetrieval.bool_operator(text, articles, inv_index))
+
+
+    articles = database.get_articles()
+    print("articles loaded")
+    inv_index = Inverted.inverted_index_all(articles)
+    print("befehl angeben mit der Syntax <wort> <operator> <wort>, erlaubte Operatoren AND, OR, ANDOR, NEAR")
+    close_requested = False
+    while close_requested is not True:
+        #print("befehl angeben mit der Syntax <wort> <operator> <wort>, erlaubte Operatoren AND, OR, ANDOR, NEAR")
+        text = input("\n> ")
+        if text == 'q':
+            break
+        else:
+            print(BooleanRetrieval.bool_operator(text, articles, inv_index))
 
 #meine Testmethode um sachen zu testen
 def leons_test_methode():
@@ -248,7 +259,7 @@ while close_requested is not True:
     elif command[0] == "s" or command[0] == "stats":
         list_stats()
     elif command[0] == "b" or command[0] == "bool":
-        bool_calc(command[1])
+        bool_calc()
     elif command[0] == "leon":
         leons_test_methode()
     elif command[0] == "emil":
