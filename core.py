@@ -50,6 +50,7 @@ def list_commands():
                           "List top n occurrences of stop words of an article"))
     print("{0}{1}".format("s/stats".ljust(column_width), "Show stats concerning all articles"))
     print("{0}{1}".format("p/persist <url>".ljust(column_width), "Persists articles from URL"))
+    print("{0}{1}".format("b/bool <operation>".ljust(column_width), "find a word with boolean-operatiions"))
     print("{0}{1}".format("q/quit".ljust(column_width), "Quit"))
 
     #i = 1
@@ -169,6 +170,13 @@ def list_stats():
     for word in words:
         print("\t{0}: {1}".format(word, words[word]))
 
+
+def bool_calc(text):
+    articles = database.get_articles()
+    inv_index = Inverted.inverted_index_all(articles)
+
+    print(BooleanRetrieval.bool_operator(text, articles, inv_index))
+
 #meine Testmethode um sachen zu testen
 def leons_test_methode():
     articles = []
@@ -191,7 +199,7 @@ def emils_test_methode():
     for article in database.get_articles_range(1, 4):
 
 
-        article.set_inverted_index(Inverted.inverted_File(article))
+        #article.set_inverted_index(Inverted.inverted_File(article))
         #print(article.get_inverted_index())
         articles.append(article)
         print(article.get_article_id(), ": ", article.get_stems())
@@ -239,6 +247,8 @@ while close_requested is not True:
         list_top_words(command[1], command[2])
     elif command[0] == "s" or command[0] == "stats":
         list_stats()
+    elif command[0] == "b" or command[0] == "bool":
+        bool_calc(command[1])
     elif command[0] == "leon":
         leons_test_methode()
     elif command[0] == "emil":

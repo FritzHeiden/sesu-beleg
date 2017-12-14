@@ -24,6 +24,21 @@ class Inverted:
         return di
 
 
+    @staticmethod
+    def inverted_index(words):
+        di = {}
+        position = 0
+
+        for word in words:
+            li = []
+            di[Stemmer.single_stem(word)] = li
+        for word in words:
+            position += 1
+            di[Stemmer.single_stem(word)].append(position)
+        return di
+
+
+
         # dic{wort: [position]}
 
     @staticmethod
@@ -35,22 +50,23 @@ class Inverted:
                 word_dict[(word, article.get_article_id())] = (article.get_inverted_index()[word])
 
 
-        #
-        # word_dict = {k: {} in range()}
-        #
-        # #article_pos_list = []
+
+
+        # word_dict = {}
+        # id_dict = {}
+        # article_pos_list = []
         # for article in articles:
-        #     #print(article.get_article_id())
-        #     counter = 0
-        #     for word in article.get_inverted_index().keys():
-        #         word_dict[word] = {}
-        #     for word in article.get_inverted_index().keys():
-        #         #print (article.get_inverted_index()[word])
-        #         #id_dict = defaultdict(list)
-        #         #id_dict[article.get_article_id()].append(article.get_inverted_index()[word])
-        #         #word_dict[word] = id_dict
-        #         #print (article.get_article_id(), ", " + word +  ": ",  article.get_inverted_index()[word],  "/n")
-        #         word_dict[word] = {article.get_article_id(): article.get_inverted_index()[word]}
+        #      #print(article.get_article_id())
+        #      counter = 0
+        #      #for word in article.get_inverted_index().keys():
+        #       #   word_dict[word] = {}
+        #      for word in article.get_inverted_index().keys():
+        #          #print (article.get_inverted_index()[word])
+        #          #id_dict = defaultdict(list)
+        #          id_dict[article.get_article_id()].append(article.get_inverted_index()[word])
+        #          #word_dict[word] = id_dict
+        #          #print (article.get_article_id(), ", " + word +  ": ",  article.get_inverted_index()[word],  "/n")
+        #          word_dict[word] = id_dict
 
         return word_dict
 

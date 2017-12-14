@@ -8,6 +8,7 @@ from data.articles_statistic import ArticlesStatistic
 
 
 
+
 class ArticlesAnalyser:
     @staticmethod
     def get_article_statistic(article):
@@ -86,6 +87,9 @@ class ArticlesAnalyser:
         words = TextAnalyser.analyse_words(article.get_content())
         article.set_words(Counter.count_words(words))
 
+        # create inverted file
+        article.set_inverted_index(Inverted.inverted_index(words))
+
         stop_words = TextAnalyser.analyse_stop_words(article.get_content())
         article.set_stop_words(Counter.count_words(stop_words))
 
@@ -93,7 +97,7 @@ class ArticlesAnalyser:
         article.add_stems(Stemmer.get_stems(words))
 
         #create inverted file
-        article.set_inverted_index(Inverted.inverted_File(article))
+        #article.set_inverted_index(Inverted.inverted_File(article))
 
         # Generate Shingles from stop words
         #shingles = ShingleGenerator.generate_stop_word_shingles(TextAnalyser.trim_text(article.get_content()), 5)

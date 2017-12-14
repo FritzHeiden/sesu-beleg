@@ -5,7 +5,7 @@ import re
 class BooleanRetrieval:
 
     @staticmethod
-    def bool_operator(text, articles, inverted_index):
+    def bool_operator(text, articles, inverted_index, near = 1):
         word_a = ""
         word_b = ""
         operator = "!"
@@ -38,10 +38,9 @@ class BooleanRetrieval:
                     hit_articels.append(BooleanRetrieval.AND(search_words, articles)) # wird nicht funktionieren
                 elif operator == "OR":
                     hit_articels.append(BooleanRetrieval.OR(search_words, articles))
-                elif operator == "AND_NOT":
-                    hit_articels.append(BooleanRetrieval.AND_NOT(search_words, articles))
                 elif operator == "NEAR":
-                    print("NEAR_METHODE")
+                    art_ids = BooleanRetrieval.AND(search_words, articles)
+                    hit_articels.append(BooleanRetrieval.NEAR(search_words, articles, art_ids, near))
                 else:
                     print("falsches Format angegeben, bitte ’word_a OPERATOR word_b' angeben")
                     break;
@@ -76,12 +75,12 @@ class BooleanRetrieval:
 
             is_word_in_article_counter = 0
             for word in word_list:
+                print("lol")
                 if word in article.get_stems():
                     is_word_in_article_counter += 1
                     if is_word_in_article_counter == found_all_word_in_article:
                         find_article.append(article.get_article_id())
         return find_article
-
     @staticmethod
     def OR (word_list, articles):
         find_article = []
@@ -97,30 +96,45 @@ class BooleanRetrieval:
             counter= 0
             for word in word_list:
                 counter += 1
-                print(len(word_list), ": ", counter)
+                #print(len(word_list), ": ", counter)
                 if word in article.get_stems():
                     is_word_in_article_counter += 1
-                    print (word, ": ", article.get_article_id(), "| ", is_word_in_article_counter)
+                    #print (word, ": ", article.get_article_id(), "| ", is_word_in_article_counter)
 
                 if counter == len(word_list) and is_word_in_article_counter == 1:
-                    print("lol")
+                    #print("lol")
                     find_article.append(article.get_article_id())
         return find_article
 
-    @staticmethod
-    def AND_NOT(word_list, articles):
+    def NEAR (word_list, articles, art_ids, near):#, inverted_index):
         find_article = []
-        # for word in word_list:
-        #   if TextAnalyser.is_stop_word(word.lower()):
-        #        break;
-        # Stemmer.get_stems(word_list)
+
+        #for word in word_list:
+         #   for art_id in art_ids:
+          #      for pos in inverted_index[(word, art_id)]:
+
+
 
         for article in articles:
-            print (article.get_stems())
-            print(word_list[0])
-            print (word_list[1])
-            if word_list[0] in article.get_stems() and word_list[1] not in article.get_stems():
-                find_article.append(article.get_article_id())
+            print(art_ids)
+            for art_id in art_ids:
+                print(art_id, " : ", article.get_article_id())
+                if art_id == article.get_article_id():
+                    for word_a in word_list:
+                        for word_b in word_list:
+                            if word_a == word_b:
+                                break
+                            for pos_a in article.get_inverted_index()[word_a]:
+                                for pos_b in article.get_inverted_index()[word_b]:
+                                    if pos_a == pos_b:
+                                        break
+                                    current_near = abs(pos_a - pos_b)
+                                    print(word_a, "|", word_b, ": ", pos_a, ", ", pos_b, ";", current_near, ", ", near)
+
+                                    if current_near <= near:
+                                        find_article.append((article.get_article_id(), current_near))
+                                        ## wahrscheinlich vieles überflüssig
+
 
 
         return find_article
