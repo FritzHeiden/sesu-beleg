@@ -53,3 +53,30 @@ class Inverted:
         #         word_dict[word] = {article.get_article_id(): article.get_inverted_index()[word]}
 
         return word_dict
+
+    @staticmethod
+    def inverted_index_all_leon(articles):
+        word_dict = {}
+
+        list = []
+        for article in articles:
+            for word in article.get_inverted_index().keys():
+                word_dict[word] = list
+        for key in word_dict.keys():
+            list = []
+            tupel = ("articel_id", "list of positions")
+            for article in articles:
+                if key in article.get_inverted_index().keys():
+
+                    tupel= (article.get_article_id(),article.get_inverted_index().get(key))
+
+                    list.append(tupel)
+
+                    #print(key,list)
+
+            word_dict[key] = list
+
+        return word_dict
+
+
+

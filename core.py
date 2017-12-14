@@ -176,10 +176,12 @@ def leons_test_methode():
         article.set_inverted_index(Inverted.inverted_File(article))
         #print(article.get_inverted_index())
         articles.append(article)
-    text = "nettozahl AND_NOT david"
-    inverted_index = Inverted.inverted_index_all(articles)
-    a =  BooleanRetrieval.bool_operator(text, articles, inverted_index)
-    print (a)
+    #text = "nettozahl AND_NOT david"
+    #inverted_index = Inverted.inverted_index_all(articles)
+    #a =  BooleanRetrieval.bool_operator(text, articles, inverted_index)
+    #print (a)
+        print(article.get_inverted_index())
+    print (Inverted.inverted_index_all_leon(articles))
 
 
 
