@@ -1,4 +1,5 @@
 from analyse.stemmer import Stemmer
+from collections import defaultdict
 
 class Inverted:
     @staticmethod
@@ -6,6 +7,7 @@ class Inverted:
         di = {}
         counter = 0
         wort_liste = []
+        #for article in articles:
         for word in article.get_content().split():
             wort_liste.append(word)
         wort_liste = Stemmer.get_stems(wort_liste)
@@ -13,9 +15,41 @@ class Inverted:
         for word in wort_liste:
             li = []
             di[word] = li
+
         for word in wort_liste:
             counter +=1
             a = counter
             di[word].append(a)
-        #print(di)
+            #print(di)
         return di
+
+
+        # dic{wort: [position]}
+
+    @staticmethod
+    def inverted_index_all (articles):
+
+        word_dict = {}
+        for article in articles:
+            for word in article.get_inverted_index().keys():
+                word_dict[(word, article.get_article_id())] = (article.get_inverted_index()[word])
+
+
+        #
+        # word_dict = {k: {} in range()}
+        #
+        # #article_pos_list = []
+        # for article in articles:
+        #     #print(article.get_article_id())
+        #     counter = 0
+        #     for word in article.get_inverted_index().keys():
+        #         word_dict[word] = {}
+        #     for word in article.get_inverted_index().keys():
+        #         #print (article.get_inverted_index()[word])
+        #         #id_dict = defaultdict(list)
+        #         #id_dict[article.get_article_id()].append(article.get_inverted_index()[word])
+        #         #word_dict[word] = id_dict
+        #         #print (article.get_article_id(), ", " + word +  ": ",  article.get_inverted_index()[word],  "/n")
+        #         word_dict[word] = {article.get_article_id(): article.get_inverted_index()[word]}
+
+        return word_dict

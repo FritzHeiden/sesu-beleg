@@ -10,6 +10,7 @@ from serialization.deserializer import Deserializer
 from analyse.stemmer import Stemmer
 from analyse.dublette import Dublette
 from analyse.inverted import Inverted
+from search.boolean_retrieval import BooleanRetrieval
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
@@ -172,9 +173,35 @@ def list_stats():
 def leons_test_methode():
     articles = []
     for article in database.get_articles_range(1, 4):
-        article.set_inverted(Inverted.inverted_File(article))
-        print(article.get_inverted())
+        article.set_inverted_index(Inverted.inverted_File(article))
+        print(article.get_inverted_index())
 
+
+
+def emils_test_methode():
+    articles = []
+
+    for article in database.get_articles_range(1, 4):
+
+
+        article.set_inverted_index(Inverted.inverted_File(article))
+        #print(article.get_inverted_index())
+        articles.append(article)
+        print(article.get_article_id(), ": ", article.get_stems())
+    #print(articles[1].get_inverted_index())
+    text = "cameron AND gescheitert"
+    text2 = "bitt OR parteitag"
+
+    inverted_index = Inverted.inverted_index_all(articles)
+    a = BooleanRetrieval.bool_operator(text, articles, inverted_index)
+    b = BooleanRetrieval.bool_operator(text2, articles, inverted_index)
+    print (a)
+    print (b)
+
+    print(inverted_index)
+
+        #stems = article.get_stems()
+        #print(stems)
 
 
 print("= Article Database =")
@@ -204,5 +231,8 @@ while close_requested is not True:
         list_stats()
     elif command[0] == "leon":
         leons_test_methode()
+    elif command[0] == "emil":
+        emils_test_methode()
+
     else:
         print("Unknown command '{0}'. Enter h or help for command list".format(command))

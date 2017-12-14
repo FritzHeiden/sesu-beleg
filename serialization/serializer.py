@@ -12,6 +12,7 @@ class Serializer:
                 "stop_words": article.get_stop_words(),
                 "stems": article.get_stems(),
                 "duplicates": article.get_duplicates()}
+                #"inverted_index": article.get_inverted_index()}
 
     @staticmethod
     def serialize_articles_statistic(articles_statistic):

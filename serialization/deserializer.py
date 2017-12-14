@@ -77,7 +77,8 @@ class Deserializer:
         stop_words = article_json["stop_words"]
         stems = article_json["stems"]
         duplicates = article_json["duplicates"]
-        return Article(article_id, version, content, date, source, title, url, words, stems, stop_words, duplicates)
+        #inverted_index = article_json["inverted_index"]
+        return Article(article_id, version, content, date, source, title, url, words, stems, stop_words, duplicates) #, inverted_index)
 
     @staticmethod
     def deserialize_articles_json(articles_json):

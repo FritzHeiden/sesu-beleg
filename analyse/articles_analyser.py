@@ -93,7 +93,7 @@ class ArticlesAnalyser:
         article.add_stems(Stemmer.get_stems(words))
 
         #create inverted file
-        article.set_inverted(Inverted.inverted_File(article))
+        article.set_inverted_index(Inverted.inverted_File(article))
 
         # Generate Shingles from stop words
         #shingles = ShingleGenerator.generate_stop_word_shingles(TextAnalyser.trim_text(article.get_content()), 5)
