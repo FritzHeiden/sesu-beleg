@@ -11,6 +11,7 @@ from analyse.stemmer import Stemmer
 from analyse.dublette import Dublette
 from analyse.inverted import Inverted
 from search.boolean_retrieval import BooleanRetrieval
+from data.inverted_file import InvertedFile
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
@@ -172,11 +173,18 @@ def list_stats():
 
 
 def bool_calc():
-
-
-
-    articles = database.get_articles()
+    dict = {}
+    articles = []
+    #articles = database.get_articles()
+    for article in database.get_articles_range(1, 500):
+        articles.append(article)
     print("articles loaded")
+    #for article in articles:
+        #for word in article.get_inverted_index():
+            #if word not in dict:
+                #dict[word] =
+
+
     inv_index = Inverted.inverted_index_all(articles)
     print("befehl angeben mit der Syntax <wort> <operator> <wort>, erlaubte Operatoren AND, OR, ANDOR, NEAR")
     close_requested = False
@@ -217,12 +225,12 @@ def emils_test_methode():
     #print(articles[1].get_inverted_index())
     text = "cameron AND gescheitert"
     text2 = "bitt OR parteitag"
-    text3 = "comment near the"
+    text3 = "comment near 20 the"
 
     inverted_index = Inverted.inverted_index_all(articles)
     a = BooleanRetrieval.bool_operator(text, articles, inverted_index)
     b = BooleanRetrieval.bool_operator(text2, articles, inverted_index)
-    c = BooleanRetrieval.bool_operator(text3, articles, inverted_index, 20)
+    c = BooleanRetrieval.bool_operator(text3, articles, inverted_index)
     print (a)
     print (b)
     print (c)

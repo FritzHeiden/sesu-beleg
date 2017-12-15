@@ -72,6 +72,10 @@ class BooleanRetrieval:
 
     @staticmethod
     def AND (word_list, articles):
+
+
+
+
         find_article = []
         found_all_word_in_article = len(word_list)
         #for word in word_list:
@@ -148,9 +152,6 @@ class BooleanRetrieval:
         return find_article
 
     @staticmethod
-
-
-
     def AND_NOT(word_list, articles):
         find_article = []
 
