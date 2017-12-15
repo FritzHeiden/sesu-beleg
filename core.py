@@ -103,7 +103,7 @@ def persist_articles(url):
     except:
         print("Invalid URL '{0}'!".format(url))
         return
-
+https://github.com/fritzendgltig/sesu-beleg.git
     # deserialize documents
     articles = Deserializer.deserialize_articles_xml(article_xml)
 
@@ -172,10 +172,9 @@ def list_stats():
 
 
 def bool_calc():
-
-
-
-    articles = database.get_articles()
+    articles = []
+    for article in database.get_articles_range(1, 1000):
+    	articles.append(article)
     print("articles loaded")
     inv_index = Inverted.inverted_index_all(articles)
     print("befehl angeben mit der Syntax <wort> <operator> <wort>, erlaubte Operatoren AND, OR, ANDOR, NEAR")
