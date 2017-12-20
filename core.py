@@ -174,18 +174,19 @@ def list_stats():
 
 def bool_calc():
     dict = {}
-    articles = []
+    #articles = []
     #articles = database.get_articles()
-    for article in database.get_articles_range(1, 500):
-        articles.append(article)
+    articles = database.get_articles()
+    #for article in database.get_articles_range(1, 20):
+    #    articles.append(article)
     print("articles loaded")
     #for article in articles:
         #for word in article.get_inverted_index():
             #if word not in dict:
                 #dict[word] =
 
-
-    inv_index = Inverted.inverted_index_all(articles)
+    anzahlList = Inverted.get_number_of_article_for_words(articles)
+    inv_index = [] #Inverted.inverted_index_all(articles)
     print("befehl angeben mit der Syntax <wort> <operator> <wort>, erlaubte Operatoren AND, OR, ANDOR, NEAR")
     close_requested = False
     while close_requested is not True:
@@ -193,8 +194,21 @@ def bool_calc():
         text = input("\n> ")
         if text == 'q':
             break
+        elif len(text.split()) == 1:
+
+            if Stemmer.single_stem(text) in anzahlList:
+                print("Das Wort", text, "kommt in", anzahlList[Stemmer.single_stem(text)], "Artikeln vor" )
+            else:
+                print("Das Wort", text, "kommt in 0 Artikeln vor")
+
+
         else:
-            print(BooleanRetrieval.bool_operator(text, articles, inv_index))
+            erg = BooleanRetrieval.bool_operator(text, articles, inv_index)
+            leng = 0
+            if erg[0] != None:
+                leng = len(erg[0])
+
+            print("Anzahl gefundener Artikel: ", leng, "\nArtikelNr: ", erg)
 
 #meine Testmethode um sachen zu testen
 def leons_test_methode():
@@ -221,14 +235,16 @@ def emils_test_methode():
         #article.set_inverted_index(Inverted.inverted_File(article))
         #print(article.get_inverted_index())
         articles.append(article)
-        print(article.get_article_id(), ": ", article.get_stems())
+        #print(article.get_article_id(), ": ", article.get_stems())
     #print(articles[1].get_inverted_index())
     text = "cameron AND gescheitert"
     text2 = "bitt OR parteitag"
     text3 = "comment near 20 the"
 
     inverted_index = Inverted.inverted_index_all(articles)
-    a = BooleanRetrieval.bool_operator(text, articles, inverted_index)
+    anzahlList = Inverted.get_number_of_article_for_words(articles)
+    print(anzahlList["aktualisiert"])
+    a = BooleanRetrieval.bool_operator(text, articles, inverted_invdex)
     b = BooleanRetrieval.bool_operator(text2, articles, inverted_index)
     c = BooleanRetrieval.bool_operator(text3, articles, inverted_index)
     print (a)

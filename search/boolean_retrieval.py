@@ -51,6 +51,8 @@ class BooleanRetrieval:
                     hit_articels.append(BooleanRetrieval.AND_NOT(search_words, articles))
                 else:
                     print("falsches Format angegeben, bitte ’word_a OPERATOR word_b' angeben")
+
+                    return  [[]]
                     break;
 
                 number_of_operations +=1 #evtl auch berechnen?

@@ -93,6 +93,16 @@ class Inverted:
             word_dict[key] = list
 
         return word_dict
+    @staticmethod
+    def get_number_of_article_for_words(articles):
+        list_words = {}
+        for article in articles:
+            for word in article.get_inverted_index():
+                if list_words.get(word) == None:
+                    list_words[word] =1
+                else:
+                    list_words[word] = list_words[word] + 1
+        return list_words
 
 
 
