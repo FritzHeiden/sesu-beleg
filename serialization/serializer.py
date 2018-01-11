@@ -35,3 +35,12 @@ class Serializer:
             "article_id": article_id,
             "signature": sig
         }
+    @staticmethod
+    def serialze_inv_file(inv_file):
+        return {"word": inv_file.get_word(),
+                "article_amount": inv_file.get_article_amount(),
+                "inv_index": inv_file.get_inv_index()
+                # wie muessen die indexes in der db abgelegt werden??
+
+        }
+

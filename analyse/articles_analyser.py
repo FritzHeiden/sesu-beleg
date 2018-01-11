@@ -5,6 +5,8 @@ from analyse.stemmer import Stemmer
 from analyse.inverted import Inverted
 from analyse.text_analyser import TextAnalyser
 from data.articles_statistic import ArticlesStatistic
+from database.search_engine_database import SearchEngineDatabase
+from data.inverted_file import InvertedFile
 
 
 
@@ -80,6 +82,11 @@ class ArticlesAnalyser:
     # siehe data.signature klasse
 
     # return {}
+
+
+
+
+
 
     @staticmethod
     def analyse_article(article=None, database=None):

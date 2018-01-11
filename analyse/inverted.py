@@ -1,5 +1,8 @@
 from analyse.stemmer import Stemmer
+from database.search_engine_database import SearchEngineDatabase
 from collections import defaultdict
+from database.search_engine_database import SearchEngineDatabase
+from data.inverted_file import InvertedFile
 
 class Inverted:
     @staticmethod
@@ -28,7 +31,7 @@ class Inverted:
     def inverted_index(words):
         di = {}
         position = 0
-
+        #if word in database.get_inverted_keys():
         for word in words:
             li = []
             di[Stemmer.single_stem(word)] = li
@@ -40,6 +43,11 @@ class Inverted:
 
 
         # dic{wort: [position]}
+
+
+
+
+
 
     @staticmethod
     def inverted_index_all (articles):

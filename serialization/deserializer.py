@@ -4,6 +4,8 @@ import xml.etree.ElementTree as ElementTree
 from data.articles_statistic import ArticlesStatistic
 from data.signature import Signature
 
+from data.inverted_file import InvertedFile
+
 
 class Deserializer:
     # creates an article array from a xml
@@ -107,4 +109,20 @@ class Deserializer:
             signatures.append(Deserializer.deserialize_signature(signature))
 
         return signatures
+
+    @staticmethod
+    def deserialze_inv_file(inv_file_json):
+        word = inv_file_json["word"]
+        article_amount = inv_file_json["article_amount"]
+        inv_index = inv_file_json["inv_index"]
+        return InvertedFile(word, article_amount, inv_index)
+
+    @staticmethod
+    def deserialze_inv_files(inv_files_json):
+        inv_files = []
+        for inv_file in inv_files_json:
+            inv_files.append(Deserializer.deserialze_inv_file(inv_file))
+        return inv_files
+
+
 

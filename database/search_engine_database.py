@@ -29,6 +29,7 @@ class SearchEngineDatabase:
         self._article_collection = self._db["articles"]
         self._statistics_collection = self._db["statistics"]
         self._meta_data_collection = self._db["meta"]
+        self._inv_index_collection = self._db["inv_index"]
 
     # inserts an article if its not present in the db
     def insert_article(self, article):
@@ -49,6 +50,31 @@ class SearchEngineDatabase:
             return Deserializer.deserialize_article_json(document)
         else:
             return None
+    def get_inv_index(self, word):
+        document = self._inv_index_collection.find_one({"word": word})
+        if document is not None:
+            return document
+        else:
+            return None
+
+    def insert_inv_file(self, inv_file):
+        inv_file = Serializer.serialze_inv_file(inv_file)
+        query = self.__inv_file_upadte_query(inv_file)
+        return self._inv_index_collection(query, inv_file, upsert=True)["updatedExisting"]
+
+    def get_inv_files(self):
+        documents = self._inv_index_collection.find()
+        indizes = []
+        for document in documents:
+            indizes.append(document)
+        return indizes
+
+    def get_inv_indizes_words(self):
+        documents = self._inv_index_collection.find()
+        indizes = []
+        for document in documents:
+            indizes.append(document.get_word())
+        return indizes
 
     # gets all articles present in the database
     def get_articles(self):
@@ -69,6 +95,10 @@ class SearchEngineDatabase:
     @staticmethod
     def __article_update_query(article):
         return {"article_id": article.get_article_id()}
+
+    @staticmethod
+    def __inv_file_upadte_query(inv_file):
+        return {"inv_file": inv_file.get_word()}
 
     def add_articles_statistic(self, articles_statistic):
         if self._statistics_collection.find_one({"id": "articles_statistic"}) is None:
