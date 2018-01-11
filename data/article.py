@@ -1,6 +1,6 @@
 class Article:
     def __init__(self, article_id, version, content, date, source, title, url, words=None, stems=None, stop_words=None,
-                 duplicates=None):
+                 duplicates=None, inverted_index=None):
         if words is None:
             words = {}
         if stems is None:
@@ -9,6 +9,9 @@ class Article:
             stop_words = {}
         if duplicates is None:
             duplicates = {}
+        if inverted_index is None:
+            inverted_index = {}
+
         self._article_id = article_id
         self._version = version
         self._content = content
@@ -20,12 +23,13 @@ class Article:
         self._stems = stems
         self._stop_words = stop_words
         self._duplicates = duplicates
+        self._inverted_index = inverted_index
 
     def __str__(self) -> str:
         return "Article{{id: '{0}', version: '{1}', content: '{2}', " \
-               "date: '{3}', source: '{4}', title: '{5}', url: '{6}', words: '{7}', stems: '{8}', stop_words: '{9}'}}" \
+               "date: '{3}', source: '{4}', title: '{5}', url: '{6}', words: '{7}', stems: '{8}', stop_words: '{9}', inverted index: '{10}'}" \
             .format(self._article_id, self._version, self._content, self._date, self._source, self._title, self._url,
-                    self._words, self._stems, self._stop_words)
+                    self._words, self._stems, self._stop_words, self._inverted_index)
 
     def get_article_id(self):
         return self._article_id
@@ -109,3 +113,10 @@ class Article:
 
     def get_duplicates(self):
         return self._duplicates
+
+    def set_inverted_index(self, inverted_index):
+        self._inverted_index = inverted_index
+
+    def get_inverted_index(self):
+        return self._inverted_index
+

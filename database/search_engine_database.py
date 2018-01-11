@@ -29,8 +29,7 @@ class SearchEngineDatabase:
         self._article_collection = self._db["articles"]
         self._statistics_collection = self._db["statistics"]
         self._meta_data_collection = self._db["meta"]
-        self._shingles_collection = self._db["shingles"]
-        self._counters_collection = self._db["counters"]
+        self._inv_index_collection = self._db["inv_index"]
 
     # inserts an article if its not present in the db
     def insert_article(self, article):
@@ -51,6 +50,31 @@ class SearchEngineDatabase:
             return Deserializer.deserialize_article_json(document)
         else:
             return None
+    def get_inv_index(self, word):
+        document = self._inv_index_collection.find_one({"word": word})
+        if document is not None:
+            return document
+        else:
+            return None
+
+    def insert_inv_file(self, inv_file):
+        inv_file = Serializer.serialze_inv_file(inv_file)
+        query = self.__inv_file_upadte_query(inv_file)
+        return self._inv_index_collection(query, inv_file, upsert=True)["updatedExisting"]
+
+    def get_inv_files(self):
+        documents = self._inv_index_collection.find()
+        indizes = []
+        for document in documents:
+            indizes.append(document)
+        return indizes
+
+    def get_inv_indizes_words(self):
+        documents = self._inv_index_collection.find()
+        indizes = []
+        for document in documents:
+            indizes.append(document.get_word())
+        return indizes
 
     # gets all articles present in the database
     def get_articles(self):
@@ -71,6 +95,10 @@ class SearchEngineDatabase:
     @staticmethod
     def __article_update_query(article):
         return {"article_id": article.get_article_id()}
+
+    @staticmethod
+    def __inv_file_upadte_query(inv_file):
+        return {"inv_file": inv_file.get_word()}
 
     def add_articles_statistic(self, articles_statistic):
         if self._statistics_collection.find_one({"id": "articles_statistic"}) is None:
@@ -102,39 +130,40 @@ class SearchEngineDatabase:
         return Deserializer.deserialize_articles_statistic(articles_statistic_json)
 
     def add_shingles(self, shingles):
+        shingles_map = self._meta_data_collection.find_one({"id": "shingles_map"})
+        if shingles_map is None:
+            shingles_map = {"id": "shingles_map", "shingles": {}}
+            self._meta_data_collection.update({"id": "shingles_map"}, shingles_map, upsert=True)
+
+        next_id = 1
+        while str(next_id) in shingles_map["shingles"]:
+            next_id += 1
+
         for shingle in shingles:
-            if self._shingles_collection.find_one({"shingle": shingle}) is not None:
+            found = False
+            for shingle_id in shingles_map["shingles"]:
+                compare_shingle = shingles_map["shingles"][shingle_id]
+                found = ShingleComparator.compare_shingles(compare_shingle, shingle)
+                if found:
+                    break
+
+            if found is True:
                 continue
-            self.increase_counter("shingle_id")
-            shingle_id = self.get_counter("shingle_id")
-            self._shingles_collection.update({"shingle": shingle},
-                                             {"shingle": shingle, "id": shingle_id}, upsert=True)
-
-    def increase_counter(self, counter_name):
-        if self._counters_collection.find_one({"_id": counter_name}) is None:
-            self._counters_collection.insert_one({"_id": counter_name, "seq": 1})
-        else:
-            self._counters_collection.update({"_id": counter_name}, {"$inc": {"seq": 1}})
-
-    def get_counter(self, counter_name):
-        counter = self._counters_collection.find_one({"_id": counter_name})
-        if counter is None:
-            return 0
-        else:
-            counter = counter["seq"]
-            if counter is None:
-                return 0
-            else:
-                return counter
+            self._meta_data_collection.update({"id": "shingles_map"}, {"$set": {"shingles." + str(next_id): shingle}})
+            next_id += 1
 
     def get_shingle_ids(self, shingles):
-        shingles_with_id = []
+        shingles_map = self._meta_data_collection.find_one({"id": "shingles_map"})
+        if shingles_map is None:
+            return None
+
+        shingles_with_id = {}
 
         for shingle in shingles:
-            entry = self._shingles_collection.find_one({"shingle": shingle})
-            if entry is None:
-                continue
-            shingles_with_id.append({"shingle": shingle, "id": entry["id"]})
+            for shingles_id in shingles_map["shingles"]:
+                compare_shingle = shingles_map["shingles"][shingles_id]
+                if ShingleComparator.compare_shingles(compare_shingle, shingle) is True:
+                    shingles_with_id[shingles_id] = compare_shingle
 
         return shingles_with_id
 
@@ -214,3 +243,4 @@ class SearchEngineDatabase:
         if found is False:
             self._meta_data_collection.update({"id": "signatures"},
                                               {"$push": {"signatures": Serializer.serialize_signature(signature)}})
+

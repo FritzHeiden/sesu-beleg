@@ -11,7 +11,8 @@ class Serializer:
                 "words": article.get_words(),
                 "stop_words": article.get_stop_words(),
                 "stems": article.get_stems(),
-                "duplicates": article.get_duplicates()}
+                "duplicates": article.get_duplicates(),
+                "inverted_index": article.get_inverted_index()}
 
     @staticmethod
     def serialize_articles_statistic(articles_statistic):
@@ -34,3 +35,12 @@ class Serializer:
             "article_id": article_id,
             "signature": sig
         }
+    @staticmethod
+    def serialze_inv_file(inv_file):
+        return {"word": inv_file.get_word(),
+                "article_amount": inv_file.get_article_amount(),
+                "inv_index": inv_file.get_inv_index()
+                # wie muessen die indexes in der db abgelegt werden??
+
+        }
+
