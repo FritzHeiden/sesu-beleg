@@ -12,10 +12,10 @@ class InvertedFile:
         return "word:{0} | articels:{1} | index:{2}".format(self._word, self._article_amount, self._inv_index)
 
     def set_word(self, word):
-        self.__word = word
+        self._word = word
 
     def get_word(self):
-        return self.__word
+        return self._word
 
     def set_article_amount(self, article_amount):
         self._article_amount = article_amount

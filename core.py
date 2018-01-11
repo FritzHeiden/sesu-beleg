@@ -12,6 +12,8 @@ from analyse.dublette import Dublette
 from analyse.inverted import Inverted
 from search.boolean_retrieval import BooleanRetrieval
 from data.inverted_file import InvertedFile
+from analyse.similarity import Similarity
+
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
@@ -181,10 +183,10 @@ def bool_calc():
     dict = {}
     #articles = []
     #articles = database.get_articles()
-    articles = database.get_articles()
+    articles = database.get_inv_files()
     #for article in database.get_articles_range(1, 20):
     #    articles.append(article)
-    print("articles loaded")
+    print("inverted Files loaded")
     #for article in articles:
         #for word in article.get_inverted_index():
             #if word not in dict:
@@ -231,7 +233,7 @@ def persist_inverted_files():
     article_count = articles_statistic.get_article_count()
 
 
-    while end <= article_count:
+    while end != article_count+1:
 
         for article in database.get_articles_range(start, end):
             words = TextAnalyser.analyse_words(article.get_content())
@@ -245,11 +247,13 @@ def persist_inverted_files():
                     inv_files[word].add_article_index(article.get_article_id(), article_index[word])
             count = count + 1
             print(count*100/article_count)
+            if count == article_count:
+                end = article_count + 1
+                break;
             if count == end-1: # and end != anzahl article
                 start = end
                 end = end + 99
-                if end >= article_count:
-                    end = article_count+1
+
 
 
     for inv_file in inv_files.keys():
@@ -264,17 +268,7 @@ def persist_inverted_files():
 
 #meine Testmethode um sachen zu testen
 def leons_test_methode():
-    articles = []
-    for article in database.get_articles_range(1, 4):
-        article.set_inverted_index(Inverted.inverted_File(article))
-        #print(article.get_inverted_index())
-        articles.append(article)
-    #text = "nettozahl AND_NOT david"
-    #inverted_index = Inverted.inverted_index_all(articles)
-    #a =  BooleanRetrieval.bool_operator(text, articles, inverted_index)
-    #print (a)
-        print(article.get_inverted_index())
-    print (Inverted.inverted_index_all_leon(articles))
+    Similarity.similarity("ay", "karamba")
 
 
 
@@ -282,7 +276,7 @@ def emils_test_methode():
 
     inv_files = {}
     start = 1
-    end = 99
+    end = 10
     count = 0
 
     articles_statistic = database.get_articles_statistic()
@@ -291,10 +285,11 @@ def emils_test_methode():
         return
 
     #article_count = articles_statistic.get_article_count()
-    article_count = 101
-    while end <= article_count:
+    article_count = 100
+    while end != article_count+1:
 
         for article in database.get_articles_range(start, end):
+
             words = TextAnalyser.analyse_words(article.get_content())
             article_index = Inverted.inverted_index(words)
             for word in article_index:
@@ -304,18 +299,48 @@ def emils_test_methode():
                     inv_files[word] = file
                 else:
                     inv_files[word].add_article_index(article.get_article_id(), article_index[word])
+
             count = count + 1
             print(count * 100 / article_count)
+            if count == article_count:
+                end = article_count + 1
+                break;
             if count == end - 1:  # and end != anzahl article
                 start = end
-                end = end + 99
-                if end >= article_count:
-                    end = article_count + 1
+                end = end + 9
 
 
+                # if end >= article_count:
+                #     if count == article_count:
+                #         end = article_count + 1
+                #     else:
+                #         end = article_count
+                #         start =end-1
+                #         print(start, end)
 
-    for inv_file in inv_files.keys():
-        print(inv_files[inv_file], "\n")
+
+    suchanfrage = "november NEAR 10 uhr"
+
+    search_indizes = []
+
+    for word in suchanfrage.split():
+        word = Stemmer.single_stem(word)
+        if word == "OR" or word == "AND" or word == "XOR" or word == "NEAR":
+            print(word)
+
+        else:
+            for inv_file in inv_files.keys():
+                if inv_files[inv_file].get_word() == word:
+                    search_indizes.append(inv_files[inv_file])
+    for index in search_indizes:
+        print(index)
+    erg = BooleanRetrieval.bool_operator(suchanfrage, search_indizes)
+    leng = 0
+    if erg[0] != None:
+        leng = len(erg[0])
+
+    print("Anzahl gefundener Artikel: ", leng, "\nArtikelNr: ", erg)
+
 
 
 
