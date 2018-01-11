@@ -290,8 +290,14 @@ def persist_inverted_files():
 
 
 # meine Testmethode um sachen zu testen
-def leons_test_methode():
-    Similarity.similarity("ay", "karamba")
+def leons_test_methode(Wort1,Wort2):
+    articles =[]
+    #for article in database.get_articles_range(1,2000):
+        #print(article.get_article_id())
+        #articles.append(article)
+    #print (type(articles[1].get_words()))
+    #Similarity.train(articles)
+    Similarity.similarity(Wort1, Wort2)
 
 
 def emils_test_methode():
@@ -430,7 +436,7 @@ while close_requested is not True:
     elif command[0] == "pi" or command[0] == "persist inv":
         persist_inverted_files()
     elif command[0] == "leon":
-        leons_test_methode()
+        leons_test_methode(command[1],command[2])
     elif command[0] == "emil":
         emils_test_methode()
 
