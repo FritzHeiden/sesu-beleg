@@ -13,7 +13,7 @@ from analyse.inverted import Inverted
 from search.boolean_retrieval import BooleanRetrieval
 from data.inverted_file import InvertedFile
 from analyse.similarity import Similarity
-
+from operator import itemgetter
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
@@ -55,28 +55,61 @@ def list_commands():
     print("{0}{1}".format("p/persist <url>".ljust(column_width), "Persists articles from URL"))
     print("{0}{1}".format("b/bool <operation>".ljust(column_width), "find a word with boolean-operatiions"))
     print("{0}{1}".format("pi/persist inv <operation>".ljust(column_width), "persist inverted_files"))
+    print("{0}{1}".format("f/find <query>".ljust(column_width), "Find articles by query"))
     print("{0}{1}".format("q/quit".ljust(column_width), "Quit"))
 
-    #i = 1
-    #for article in database.get_articles_range(i, 4):
-        #x = i+1
-        #eins = []
-        #print(article.get_content())
-        #for shingle in ShingleGenerator.generate_stop_word_shingles(article.get_content(), 5):
-            #eins.append(Stemmer.get_stems(shingle))
-        #for article_v in database.get_articles_range(x, 4+1):
-            #zwei = []
-            #print(article_v.get_content())
-            #for shingle_v in ShingleGenerator.generate_stop_word_shingles(article_v.get_content(), 5):
-                #zwei.append(Stemmer.get_stems(shingle_v))
-            #Dublette.shingledublette(eins, zwei)
-            #print("_________")
-        #i +=1
+    # i = 1
+    # for article in database.get_articles_range(i, 4):
+    # x = i+1
+    # eins = []
+    # print(article.get_content())
+    # for shingle in ShingleGenerator.generate_stop_word_shingles(article.get_content(), 5):
+    # eins.append(Stemmer.get_stems(shingle))
+    # for article_v in database.get_articles_range(x, 4+1):
+    # zwei = []
+    # print(article_v.get_content())
+    # for shingle_v in ShingleGenerator.generate_stop_word_shingles(article_v.get_content(), 5):
+    # zwei.append(Stemmer.get_stems(shingle_v))
+    # Dublette.shingledublette(eins, zwei)
+    # print("_________")
+    # i +=1
 
 
-        #print(ShingleGenerator.generate_stop_word_shingles(article.get_content(),5))
+    # print(ShingleGenerator.generate_stop_word_shingles(article.get_content(),5))
 
 
+def find_article(query):
+    # ToDo find article
+
+
+    print('Showing results for \'{0}\'\n'.format(query))
+
+    results = [
+        {'score': 0.8, 'id': 62379, 'title': 'Some other article'},
+        {'score': 1.0, 'id': 87234, 'title': 'Some article'},
+        {'score': 0.73, 'id': 87234, 'title': 'Some article'},
+        {'score': 0.126, 'id': 87234, 'title': 'Some article'},
+        {'score': 0.3, 'id': 87234, 'title': 'Some article'},
+        {'score': 0.012, 'id': 87234, 'title': 'Some article'},
+        {'score': 0.012, 'id': 87234, 'title': 'Some article'},
+        {'score': 0.012, 'id': 87234, 'title': 'Some article'},
+        {'score': 0.012, 'id': 87234, 'title': 'Some article'},
+        {'score': 0.867, 'id': 87234, 'title': 'Some article'},
+        {'score': 0.9812, 'id': 87234, 'title': 'Some article'},
+        {'score': 1.0, 'id': 87234, 'title': 'Some article'}
+    ]
+
+    score_width = 10
+    id_width = 15
+    title_width = 40
+
+    print('{0}{1}{2}'.format('Score'.ljust(score_width), 'ID'.ljust(id_width), 'Title'.ljust(title_width)))
+
+    for result in sorted(results, key=itemgetter('score'), reverse=True)[:10]:
+        print('{0}{1}{2}'.format(
+            str(result['score']).ljust(score_width),
+            str(result['id']).ljust(id_width),
+            str(result['title']).ljust(title_width)))
 
 
 def list_articles(count, start_position):
@@ -181,30 +214,30 @@ def list_stats():
 
 def bool_calc():
     dict = {}
-    #articles = []
-    #articles = database.get_articles()
+    # articles = []
+    # articles = database.get_articles()
     articles = database.get_inv_files()
-    #for article in database.get_articles_range(1, 20):
+    # for article in database.get_articles_range(1, 20):
     #    articles.append(article)
     print("inverted Files loaded")
-    #for article in articles:
-        #for word in article.get_inverted_index():
-            #if word not in dict:
-                #dict[word] =
+    # for article in articles:
+    # for word in article.get_inverted_index():
+    # if word not in dict:
+    # dict[word] =
 
     anzahlList = Inverted.get_number_of_article_for_words(articles)
-    inv_index = [] #Inverted.inverted_index_all(articles)
+    inv_index = []  # Inverted.inverted_index_all(articles)
     print("befehl angeben mit der Syntax <wort> <operator> <wort>, erlaubte Operatoren AND, OR, ANDOR, NEAR")
     close_requested = False
     while close_requested is not True:
-        #print("befehl angeben mit der Syntax <wort> <operator> <wort>, erlaubte Operatoren AND, OR, ANDOR, NEAR")
+        # print("befehl angeben mit der Syntax <wort> <operator> <wort>, erlaubte Operatoren AND, OR, ANDOR, NEAR")
         text = input("\n> ")
         if text == 'q':
             break
         elif len(text.split()) == 1:
 
             if Stemmer.single_stem(text) in anzahlList:
-                print("Das Wort", text, "kommt in", anzahlList[Stemmer.single_stem(text)], "Artikeln vor" )
+                print("Das Wort", text, "kommt in", anzahlList[Stemmer.single_stem(text)], "Artikeln vor")
             else:
                 print("Das Wort", text, "kommt in 0 Artikeln vor")
 
@@ -229,11 +262,9 @@ def persist_inverted_files():
         print("No statistics so far.")
         return
 
-
     article_count = articles_statistic.get_article_count()
 
-
-    while end != article_count+1:
+    while end != article_count + 1:
 
         for article in database.get_articles_range(start, end):
             words = TextAnalyser.analyse_words(article.get_content())
@@ -246,34 +277,24 @@ def persist_inverted_files():
                 else:
                     inv_files[word].add_article_index(article.get_article_id(), article_index[word])
             count = count + 1
-            print(count*100/article_count)
+            print(count * 100 / article_count)
             if count == article_count:
                 end = article_count + 1
                 break;
-            if count == end-1: # and end != anzahl article
+            if count == end - 1:  # and end != anzahl article
                 start = end
                 end = end + 99
-
-
 
     for inv_file in inv_files.keys():
         database.insert_inv_file(inv_files[inv_file])
 
 
-
-
-
-
-
-
-#meine Testmethode um sachen zu testen
+# meine Testmethode um sachen zu testen
 def leons_test_methode():
     Similarity.similarity("ay", "karamba")
 
 
-
 def emils_test_methode():
-
     inv_files = {}
     start = 1
     end = 10
@@ -284,9 +305,9 @@ def emils_test_methode():
         print("No statistics so far.")
         return
 
-    #article_count = articles_statistic.get_article_count()
+    # article_count = articles_statistic.get_article_count()
     article_count = 100
-    while end != article_count+1:
+    while end != article_count + 1:
 
         for article in database.get_articles_range(start, end):
 
@@ -317,7 +338,6 @@ def emils_test_methode():
                 #         end = article_count
                 #         start =end-1
                 #         print(start, end)
-
 
     suchanfrage = "november NEAR 10 uhr"
 
@@ -371,8 +391,8 @@ def emils_test_methode():
     #
     # print(inverted_index)
 
-        #stems = article.get_stems()
-        #print(stems)
+    # stems = article.get_stems()
+    # print(stems)
 
 
 print("= Article Database =")
@@ -402,6 +422,11 @@ while close_requested is not True:
         list_stats()
     elif command[0] == "b" or command[0] == "bool":
         bool_calc()
+    elif command[0] == "f" or command[0] == "find":
+        query = ""
+        for i in range(1, len(command)):
+            query = "{0} {1}".format(query, command[i])
+        find_article(query.strip())
     elif command[0] == "pi" or command[0] == "persist inv":
         persist_inverted_files()
     elif command[0] == "leon":

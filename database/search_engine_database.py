@@ -50,6 +50,7 @@ class SearchEngineDatabase:
             return Deserializer.deserialize_article_json(document)
         else:
             return None
+
     def get_inv_index(self, word):
         document = self._inv_index_collection.find_one({"word": word})
         if document is not None:
@@ -243,4 +244,3 @@ class SearchEngineDatabase:
         if found is False:
             self._meta_data_collection.update({"id": "signatures"},
                                               {"$push": {"signatures": Serializer.serialize_signature(signature)}})
-
