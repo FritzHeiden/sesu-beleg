@@ -56,6 +56,7 @@ def list_commands():
     print("{0}{1}".format("b/bool <operation>".ljust(column_width), "find a word with boolean-operatiions"))
     print("{0}{1}".format("pi/persist inv <operation>".ljust(column_width), "persist inverted_files"))
     print("{0}{1}".format("f/find <query>".ljust(column_width), "Find articles by query"))
+    print("{0}{1}".format("sim/similarity <word1> <word2>".ljust(column_width), "Similarity between two Words"))
     print("{0}{1}".format("q/quit".ljust(column_width), "Quit"))
 
     # i = 1
@@ -290,13 +291,16 @@ def persist_inverted_files():
 
 
 # meine Testmethode um sachen zu testen
-def leons_test_methode(Wort1,Wort2):
+def leons_test_methode():
     articles =[]
     #for article in database.get_articles_range(1,2000):
         #print(article.get_article_id())
         #articles.append(article)
     #print (type(articles[1].get_words()))
     #Similarity.train(articles)
+    Similarity.similarity("apfel", "baum")
+
+def word_similarity(Wort1,Wort2):
     Similarity.similarity(Wort1, Wort2)
 
 
@@ -435,8 +439,10 @@ while close_requested is not True:
         find_article(query.strip())
     elif command[0] == "pi" or command[0] == "persist inv":
         persist_inverted_files()
+    elif command[0] == "similarity" or command[0] == "sim":
+        word_similarity(command[1], command[2])
     elif command[0] == "leon":
-        leons_test_methode(command[1],command[2])
+        leons_test_methode()
     elif command[0] == "emil":
         emils_test_methode()
 
