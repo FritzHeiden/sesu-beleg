@@ -12,6 +12,8 @@ from analyse.dublette import Dublette
 from analyse.inverted import Inverted
 from search.boolean_retrieval import BooleanRetrieval
 from data.inverted_file import InvertedFile
+from analyse.similarity import Similarity
+
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
@@ -260,17 +262,7 @@ def persist_inverted_files():
 
 #meine Testmethode um sachen zu testen
 def leons_test_methode():
-    articles = []
-    for article in database.get_articles_range(1, 4):
-        article.set_inverted_index(Inverted.inverted_File(article))
-        #print(article.get_inverted_index())
-        articles.append(article)
-    #text = "nettozahl AND_NOT david"
-    #inverted_index = Inverted.inverted_index_all(articles)
-    #a =  BooleanRetrieval.bool_operator(text, articles, inverted_index)
-    #print (a)
-        print(article.get_inverted_index())
-    print (Inverted.inverted_index_all_leon(articles))
+    Similarity.similarity("ay", "karamba")
 
 
 
