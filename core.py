@@ -150,7 +150,7 @@ def persist_articles(url):
     for article in articles:
         if database.get_article(article.get_article_id()) is None:
             print("Persisting article #{0}".format(count))
-            article = ArticlesAnalyser.analyse_article(article, database)
+            #article = ArticlesAnalyser.analyse_article(article, database)
             count += 1
 
             # persist article in database
@@ -159,9 +159,9 @@ def persist_articles(url):
             #     article.get_title(), article.get_url()
             # ))
 
-            articles_statistic = ArticlesAnalyser.get_article_statistic(article)
+            #articles_statistic = ArticlesAnalyser.get_article_statistic(article)
             database.insert_article(article)
-            database.add_articles_statistic(articles_statistic)
+            #database.add_articles_statistic(articles_statistic)
         else:
             print("Article with id {0} already in database.".format(article.get_article_id()))
 
