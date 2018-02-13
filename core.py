@@ -145,6 +145,8 @@ def list_stats():
     for word in words:
         print("\t{0}: {1}".format(word, words[word]))
 
+def leon():
+    print(database.get_article(10040).get_content())
 
 print("= Article Database =")
 print("Enter h or help to list commands")
@@ -171,5 +173,7 @@ while close_requested is not True:
         list_top_words(command[1], command[2])
     elif command[0] == "s" or command[0] == "stats":
         list_stats()
+    elif command[0] == "leon":
+        leon()
     else:
         print("Unknown command '{0}'. Enter h or help for command list".format(command))
