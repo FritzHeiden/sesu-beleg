@@ -4,6 +4,7 @@ from analyse.shingle_generator import ShingleGenerator
 from analyse.stemmer import Stemmer
 from analyse.text_analyser import TextAnalyser
 from data.articles_statistic import ArticlesStatistic
+from database.search_engine_database import SearchEngineDatabase
 
 
 class ArticlesAnalyser:
@@ -41,7 +42,7 @@ class ArticlesAnalyser:
         # analyse words from content and add them to the article object
         words = TextAnalyser.analyse_words(article.get_content())
         article.set_words(Counter.count_words(words))
-
+        SearchEngineDatabase(article)
         stop_words = TextAnalyser.analyse_stop_words(article.get_content())
         article.set_stop_words(Counter.count_words(stop_words))
 
