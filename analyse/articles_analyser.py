@@ -45,7 +45,7 @@ class ArticlesAnalyser:
         stop_words = TextAnalyser.analyse_stop_words(article.get_content())
         article.set_stop_words(Counter.count_words(stop_words))
 
-        SearchEngineDatabase.insert_article(article)
+        SearchEngineDatabase.insert_article(database,article)
 
         # create stems from words and add them to the article object
         article.add_stems(Stemmer.get_stems(words))
