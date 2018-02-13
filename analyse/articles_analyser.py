@@ -42,7 +42,6 @@ class ArticlesAnalyser:
         # analyse words from content and add them to the article object
         words = TextAnalyser.analyse_words(article.get_content())
         article.set_words(Counter.count_words(words))
-        SearchEngineDatabase(article)
         stop_words = TextAnalyser.analyse_stop_words(article.get_content())
         article.set_stop_words(Counter.count_words(stop_words))
 
