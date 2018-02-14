@@ -9,8 +9,10 @@ class Similarity:
         for article in articles:
             sentences.append(article.get_words().keys())
 
-        model = Word2Vec(sentences,size=100, window=5, min_count=5)
-        #model = Word2Vec(sentences,min_count = 1)
+        #model = Word2Vec(sentences,size=100, window=5, min_count=5)
+        print("1")
+        model = Word2Vec(sentences,min_count = 1)
+        print("2")
         model.save("trained.model")
         print (sentences)
 

@@ -148,10 +148,10 @@ def list_stats():
 
 def leon():
     #TRAINIERTES MODEL WIRD ERZEUGT
-    #articles = []
-    #for article in database.get_articles_range(0,4000):
-        #articles.append(article)
-    #Similarity.train(articles)
+    articles = []
+    for article in database.get_articles():
+        articles.append(article)
+    Similarity.train(articles)
 
     print(Similarity.similarity("übertragen","versenden"))
 
