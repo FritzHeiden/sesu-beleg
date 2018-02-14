@@ -149,7 +149,7 @@ def list_stats():
 def leon():
     #TRAINIERTES MODEL WIRD ERZEUGT
     articles = []
-    for article in database.get_articles():
+    for article in database.get_articles_range(0,20):
         articles.append(article)
     Similarity.train(articles)
 
