@@ -9,6 +9,7 @@ from analyse.text_analyser import TextAnalyser
 from database.search_engine_database import SearchEngineDatabase
 from network.url_helper import UrlHelper
 from serialization.deserializer import Deserializer
+from analyse.Similarity import Similarity
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
@@ -146,7 +147,13 @@ def list_stats():
         print("\t{0}: {1}".format(word, words[word]))
 
 def leon():
-    print(database.get_article(10040).get_content())
+    #TRAINIERTES MODEL WIRD ERZEUGT
+    #articles = []
+    #for article in database.get_articles_range(0,4000):
+        #articles.append(article)
+    #Similarity.train(articles)
+
+    print(Similarity.similarity("übertragen","versenden"))
 
 print("= Article Database =")
 print("Enter h or help to list commands")
