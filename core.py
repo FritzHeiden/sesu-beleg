@@ -84,7 +84,9 @@ def persist_articles(url):
     try:
         article_xml = UrlHelper.retrieve_url(url)
     except:
-        print("Invalid URL '{0}'!".format(url))
+        e = sys.exc_info()[0]
+        print(e)
+        # print("Invalid URL '{0}'!".format(url))
         return
 
     # deserialize documents
