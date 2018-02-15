@@ -90,3 +90,12 @@ class Deserializer:
         words = articles_statistic_json["words"]
         article_count = articles_statistic_json["article_count"]
         return ArticlesStatistic(sources, words, article_count)
+
+    @staticmethod
+    def deserialize_inverted_index(inv_index_json):
+        #inv_index = []
+        word = inv_index_json["word"]
+        post = inv_index_json["post"]
+        #inv_index.append(word)
+        #inv_index.append(post)
+        return post

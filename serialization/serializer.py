@@ -18,3 +18,7 @@ class Serializer:
                 "sources": articles_statistic.get_sources(),
                 "words": articles_statistic.get_words(),
                 "article_count": articles_statistic.get_article_count()}
+    @staticmethod
+    def serialize_inverted_index(word, post):
+        return {"word": word,
+                "post": post}

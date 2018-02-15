@@ -93,7 +93,7 @@ def persist_articles(url):
                 article.get_article_id(), article.get_version(), article.get_date(), article.get_source(),
                 article.get_title(), article.get_url()
             ))
-
+            persist_inv_index(article)
             articles_statistic = ArticlesAnalyser.get_article_statistic(article)
             database.add_articles_statistic(articles_statistic)
         else:
@@ -145,6 +145,31 @@ def list_stats():
     words = Counter.top_words(articles_statistic.get_words(), 100)
     for word in words:
         print("\t{0}: {1}".format(word, words[word]))
+
+
+def persist_inv_index(article):
+
+    article_words = []
+    #term_frequency = 0
+
+
+    #for article in database.get_articles():
+        #start word um dopplung zu vermeiden
+    start_word = 0
+    for word_a in article.get_stems():
+        post = []
+        start_word = start_word +1
+        if word_a not in article_words:
+            article_words.append(word_a)
+            counter = 1
+            for word_b in article.get_stems()[start_word:]:
+                if word_a == word_b:
+                    counter = counter +1
+
+            term_frequency = counter / len(article.get_stems())
+            post.append(article.get_article_id)
+            post.append(term_frequency)
+            database.add_inverted_index(word_a, post)
 
 def leon():
     #TRAINIERTES MODEL WIRD ERZEUGT
