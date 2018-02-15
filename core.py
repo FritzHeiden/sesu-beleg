@@ -222,8 +222,6 @@ def model_train():
     Similarity.train(articles)
 
 def leon():
-
-
     #print(Similarity.similarity("füllen","felder"))
 
     wortliste = ["eins","zwei","drei"]
