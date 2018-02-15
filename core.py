@@ -243,15 +243,14 @@ def model_train():
     articles = []
     for article in database.get_articles():
         articles.append(article)
+    print ("Training Started")
     Similarity.train(articles)
 
 
 
 def leon():
-    # print(Similarity.similarity("füllen","felder"))
+     print(Similarity.similarity("merkel","angela"))
 
-    wortliste = ["eins", "zwei", "drei"]
-    print(AND.AND(wortliste))
 
 
 def emil():
