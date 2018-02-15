@@ -33,7 +33,7 @@ class SearchEngineDatabase:
         query = self.__article_update_query(article)
         # execute query; if document is present, it is being updated; upsert true causes mongodb to insert article if
         # its not present
-        return self._article_collection.update(query, document, upsert=True)["updatedExisting"]
+        self._article_collection.insert(document)
 
 
 
@@ -46,6 +46,11 @@ class SearchEngineDatabase:
             return Deserializer.deserialize_article_json(document)
         else:
             return None
+
+    def article_exists(self, article_id):
+        # execute query with criteria article_id
+        document = self._article_collection.find({"article_id": article_id}).limit(1)
+        return len(document) > 0
 
     # gets all articles present in the database
     def get_articles(self):
@@ -73,15 +78,15 @@ class SearchEngineDatabase:
 
         inc_dict = {}
 
-        sources = articles_statistic.get_sources()
-        if len(sources) > 0:
-            for source in sources:
-                inc_dict["sources.{0}".format(source)] = sources[source]
-
-        words = articles_statistic.get_words()
-        if len(words) > 0:
-            for word in words:
-                inc_dict["words.{0}".format(word)] = words[word]
+        # sources = articles_statistic.get_sources()
+        # if len(sources) > 0:
+        #     for source in sources:
+        #         inc_dict["sources.{0}".format(source)] = sources[source]
+        #
+        # words = articles_statistic.get_words()
+        # if len(words) > 0:
+        #     for word in words:
+        #         inc_dict["words.{0}".format(word)] = words[word]
 
         article_count = articles_statistic.get_article_count()
         inc_dict["article_count"] = article_count
@@ -118,7 +123,11 @@ class SearchEngineDatabase:
         else:
             return None
 
-
+    def add_post(self, word, post):
+        if self._inverted_index_collection.find_one({"word": word}) is None:
+            self._inverted_index_collection.insert({"word": word, "posts": [post]})
+        else:
+            self._inverted_index_collection.update({"word": word}, {"$push": {"posts": post}})
 
 
     def add_shingles(self, shingles):
