@@ -182,7 +182,7 @@ def leon():
     print(Similarity.similarity("übertragen","versenden"))
 
 def emil():
-    print(database.get_inverted_index(Stemmer.single_stem("Merkel")))
+    print(database.get_inverted_index(Stemmer.single_stem("matthia")))
 
 print("= Article Database =")
 print("Enter h or help to list commands")
