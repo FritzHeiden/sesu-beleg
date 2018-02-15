@@ -213,12 +213,15 @@ def persist_inv_index(article):
     #             post.append(term_frequency)
     #             database.add_inverted_index(word_a, post)
 
+def model_train():
+    # TRAINIERTES MODEL WIRD ERZEUGT
+    articles = []
+    for article in database.get_articles():
+         articles.append(article)
+    Similarity.train(articles)
+
 def leon():
-    #TRAINIERTES MODEL WIRD ERZEUGT
-    #articles = []
-    #for article in database.get_articles():
-        #articles.append(article)
-    #Similarity.train(articles)
+
 
     #print(Similarity.similarity("füllen","felder"))
 
@@ -254,6 +257,8 @@ while close_requested is not True:
         list_top_words(command[1], command[2])
     elif command[0] == "s" or command[0] == "stats":
         list_stats()
+    elif command[0] == "model_train":
+        model_train()
     elif command[0] == "leon":
         leon()
     elif command[0] == "inv":
