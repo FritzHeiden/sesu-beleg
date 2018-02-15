@@ -32,7 +32,7 @@ class AND:
         #articel_id  = list(a.values())[1][0]['article_id']
         ### ALTER INDEX#####################################################################################
 
-        
+
         ### NEUER INDEX#####################################################################################
         dic_list = [] #liste Aller Dicts die auch in Wortliste vorhanden sind
         for word in word_list:
