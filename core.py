@@ -2,7 +2,6 @@ import sys
 import math
 import time
 
-
 from threading import Thread
 
 from analyse.articles_analyser import ArticlesAnalyser
@@ -83,8 +82,7 @@ def persist_articles(url):
     # download xml documents
     try:
         article_xml = UrlHelper.retrieve_url(url)
-    except:
-        e = sys.exc_info()[0]
+    except UnicodeDecodeError as e:
         print(e)
         # print("Invalid URL '{0}'!".format(url))
         return
