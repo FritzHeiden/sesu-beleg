@@ -10,6 +10,7 @@ from analyse.min_hasher import MinHasher
 from analyse.shingle_generator import ShingleGenerator
 from analyse.stemmer import Stemmer
 from analyse.text_analyser import TextAnalyser
+from database.inverted_index import InvertedIndex
 from database.search_engine_database import SearchEngineDatabase
 from network.url_helper import UrlHelper
 from serialization.deserializer import Deserializer
@@ -82,6 +83,22 @@ def find_articles(query):
     print("Finding articles for query '{0}':".format(query))
     andEvaluator = AND(database)
     articles = andEvaluator.AND(query)
+
+    inverted_index = InvertedIndex(database)
+
+    results = []
+    for article in articles:
+        cos_sim = Similarity.cosine_similarity(query, article, inverted_index)
+        soft_cos_sim = Similarity.soft_cosine_similarity(query, article, inverted_index)
+        results.append({"cos_sim": cos_sim, "soft_cos_sim": soft_cos_sim, "title": article.get_title(),
+                        "id": article.get_article_id()})
+
+    results = sorted(results, key=lambda k: k['cos_sim'], reverse=True)
+
+    print("{0}{1}{2}{3}".format("ID".ljust(7), "Title".ljust(15), "cos sim".ljust(10), "scos sim".ljust(10)))
+    for result in results:
+        print("{0}{1}{2}{3}".format(result["id"].ljust(7), result["title"].ljust(15), result["cos_sim"].ljust(10),
+                                    result["scos_sim"].ljust(10)))
 
 
 def persist_articles(url):
