@@ -78,6 +78,12 @@ def list_articles(count, start_position):
         ))
 
 
+def find_articles(query):
+    print("Finding articles for query '{0}':".format(query))
+    andEvaluator = AND(database)
+    articles = andEvaluator.AND(query)
+
+
 def persist_articles(url):
     # download xml documents
     try:
@@ -114,11 +120,12 @@ def persist_article(article, count, total_articles):
         article = ArticlesAnalyser.analyse_article(article, database)
 
         # persist article in database
-        print("{0}/{1} ({2}%): New article added: id: {3}, version: {4}, date: {5}, source: {6}, title: {7}, url: {8}".format(
-            count, total_articles, math.floor(count / total_articles * 10000) / 100, article.get_article_id(),
-            article.get_version(), article.get_date(), article.get_source(),
-            article.get_title(), article.get_url()
-        ))
+        print(
+            "{0}/{1} ({2}%): New article added: id: {3}, version: {4}, date: {5}, source: {6}, title: {7}, url: {8}".format(
+                count, total_articles, math.floor(count / total_articles * 10000) / 100, article.get_article_id(),
+                article.get_version(), article.get_date(), article.get_source(),
+                article.get_title(), article.get_url()
+            ))
 
         database.insert_article(article)
         persist_inv_index(article)
@@ -127,7 +134,6 @@ def persist_article(article, count, total_articles):
     else:
         print("{0}/{1} ({2}%): Article with id {3} already in database.".format(
             count, total_articles, math.floor(count / total_articles * 10000) / 100, article.get_article_id()))
-
 
 
 def list_words(article_id):
@@ -195,41 +201,49 @@ def persist_inv_index(article):
 
 
 
-    #for article in database.get_articles():
-        #start word um dopplung zu vermeiden
-    # for article in database.get_articles_range(1,10):
-    #     start_word = 0
-    #     for word_a in article.get_stems():
-    #         post = []
-    #         start_word = start_word +1
-    #         if word_a not in article_words:
-    #             article_words.append(word_a)
-    #             counter = 1
-    #             for word_b in article.get_stems()[start_word:]:
-    #                 if word_a == word_b:
-    #                     counter = counter +1
-    #
-    #             term_frequency = counter / len(article.get_stems())
-    #             post.append(article.get_article_id())
-    #             post.append(term_frequency)
-    #             database.add_inverted_index(word_a, post)
+        # for article in database.get_articles():
+        # start word um dopplung zu vermeiden
+        # for article in database.get_articles_range(1,10):
+        #     start_word = 0
+        #     for word_a in article.get_stems():
+        #         post = []
+        #         start_word = start_word +1
+        #         if word_a not in article_words:
+        #             article_words.append(word_a)
+        #             counter = 1
+        #             for word_b in article.get_stems()[start_word:]:
+        #                 if word_a == word_b:
+        #                     counter = counter +1
+        #
+        #             term_frequency = counter / len(article.get_stems())
+        #             post.append(article.get_article_id())
+        #             post.append(term_frequency)
+        #             database.add_inverted_index(word_a, post)
+
 
 def model_train():
     # TRAINIERTES MODEL WIRD ERZEUGT
     articles = []
     for article in database.get_articles():
-         articles.append(article)
+        articles.append(article)
     Similarity.train(articles)
 
+<<<<<<< HEAD
 def leon():
     #print(Similarity.similarity("füllen","felder"))
+=======
 
-    wortliste = ["eins","zwei","drei"]
+def leon():
+    # print(Similarity.similarity("füllen","felder"))
+>>>>>>> 48f0364341e5d7a38b9a7d187397230424a675da
+
+    wortliste = ["eins", "zwei", "drei"]
     print(AND.AND(wortliste))
 
 
 def emil():
     print(database.get_inverted_index(Stemmer.single_stem("matthia")))
+
 
 print("= Article Database =")
 print("Enter h or help to list commands")
@@ -254,6 +268,11 @@ while close_requested is not True:
         list_stop_words(command[1])
     elif command[0] == "t" or command[0] == "top":
         list_top_words(command[1], command[2])
+    elif command[0] == "f" or command[0] == "find":
+        query = ""
+        for i in range(1, len(command)):
+            query += command[i] + " "
+        find_articles(query)
     elif command[0] == "s" or command[0] == "stats":
         list_stats()
     elif command[0] == "model_train":
