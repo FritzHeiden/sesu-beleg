@@ -40,24 +40,26 @@ class AND:
         posts = self.database.get_posts(word_list.split()[0])
         for post in posts:
                 start_list.append(post['article_id'])
-        print(start_list)
 
-        no_hit = []
+
+        hit = []
         for word in word_list.split():
             compare_list = []
             posts = self.database.get_posts(word)
             for post in posts:
                 compare_list.append(post['article_id'])
-            print(compare_list)
-            for element in start_list:
-                if element not in compare_list:
-                    no_hit.append(element)
 
-        for element in start_list:
-            if element not in no_hit:
-                no_hit.append(element)
+            for element in compare_list:
+                if element in start_list:
+                    if not start_list == compare_list:
+                        hit.append(element)
 
-        print (no_hit)
-        list = []
-        return list
+
+
+        results = list(map(int,hit))
+        print (results)
+        articles = []
+        for id in results:
+            articles.append(self.database.get_article(id))
+        return articles
         ### NEUER INDEX#####################################################################################
