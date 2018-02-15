@@ -7,13 +7,11 @@ class InvertedIndex:
         self.searchEngineDatabase = searchEngineDatabase
 
     def get_term_frequency(self, word, article_id):
-        inv_index = self.searchEngineDatabase.get_inverted_index(word)
-        for index in inv_index:
-            if inv_index == article_id:
-                return inv_index[1]
-        return None
-        # ToDo get term frequency from database
-        # pass
+        posts = self.searchEngineDatabase.get_posts(word)
+        for post in posts:
+            if post["article_id"] == article_id:
+                return post["tf"]
+        return 0
 
     def get_inverted_document_frequency(self, word):
         total_article_count = len(self.searchEngineDatabase.get_posts(word))
