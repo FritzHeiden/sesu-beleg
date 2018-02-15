@@ -124,10 +124,16 @@ class SearchEngineDatabase:
             return None
 
     def add_post(self, word, post):
-        if self._inverted_index_collection.find_one({"word": word}) is None:
+        if len(self._inverted_index_collection.find({"word": word}).limit(1)) == 0:
             self._inverted_index_collection.insert({"word": word, "posts": [post]})
         else:
             self._inverted_index_collection.update({"word": word}, {"$push": {"posts": post}})
+
+    def get_posts(self, word):
+        result = self._inverted_index_collection.find({"word": word}).limit(1)
+        if result == 0:
+            return None
+        return result[0]["posts"]
 
 
     def add_shingles(self, shingles):
