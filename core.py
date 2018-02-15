@@ -153,7 +153,8 @@ def leon():
         articles.append(article)
     Similarity.train(articles)
 
-    print(Similarity.similarity("übertragen","versenden"))
+
+    print(Similarity.similarity("füllen","felder"))
 
 print("= Article Database =")
 print("Enter h or help to list commands")
