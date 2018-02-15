@@ -124,6 +124,7 @@ def persist_article(article, count, total_articles):
         persist_inv_index(article)
         articles_statistic = ArticlesAnalyser.get_article_statistic(article)
         database.add_articles_statistic(articles_statistic)
+        Similarity.train([article])
     else:
         print("{0}/{1} ({2}%): Article with id {3} already in database.".format(
             count, total_articles, math.floor(count / total_articles * 10000) / 100, article.get_article_id()))
