@@ -1,7 +1,9 @@
-import requests
-import math
 import datetime
+import math
 import os
+
+import requests
+
 
 class UrlHelper:
     @staticmethod
@@ -37,7 +39,7 @@ class UrlHelper:
             ))
 
         file.close()
-        file = open(file_path, "r")
+        file = open(file_path, "r", errors='ignore')
         document = file.read()
         file.close()
         os.remove(file_path)
