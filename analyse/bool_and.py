@@ -1,6 +1,8 @@
 class AND:
-    @staticmethod
-    def AND(word_list):
+    def __init__(self, database):
+        self.database = database
+
+    def AND(self, word_list):
         index = [
             {
                 "word": "eins",
@@ -34,6 +36,10 @@ class AND:
 
         
         ### NEUER INDEX#####################################################################################
+        for word in word_list:
+            posts = self.database.get_posts(word)
+
+
         dic_list = [] #liste Aller Dicts die auch in Wortliste vorhanden sind
         for word in word_list:
             for dict in index:
