@@ -21,7 +21,7 @@ test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
 test_data_url = "http://daten.datenlabor-berlin.de/newspart1.xml"
 
 # mongodb connection information
-mongodb_host = "127.0.0.1"
+mongodb_host = "spadi8.f4.htw-berlin.de"
 # mongodb_host = "localhost"
 mongodb_port = 28018
 mongodb_db_name = "search_engine"
