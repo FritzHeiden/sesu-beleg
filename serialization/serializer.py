@@ -8,8 +8,8 @@ class Serializer:
                 "source": article.get_source(),
                 "title": article.get_title(),
                 "url": article.get_url(),
-                "words": article.get_words(),
-                "stop_words": article.get_stop_words(),
+                # "words": article.get_words(),
+                # "stop_words": article.get_stop_words(),
                 "stems": article.get_stems()}
 
     @staticmethod

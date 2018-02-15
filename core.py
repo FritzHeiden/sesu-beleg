@@ -1,4 +1,8 @@
 import sys
+import math
+import time
+
+from threading import Thread
 
 from analyse.articles_analyser import ArticlesAnalyser
 from analyse.counter import Counter
@@ -16,7 +20,7 @@ test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
 test_data_url = "http://daten.datenlabor-berlin.de/newspart1.xml"
 
 # mongodb connection information
-mongodb_host = "spadi8.f4.htw-berlin.de"
+mongodb_host = "127.0.0.1"
 # mongodb_host = "localhost"
 mongodb_port = 28018
 mongodb_db_name = "search_engine"
@@ -84,20 +88,44 @@ def persist_articles(url):
     # deserialize documents
     articles = Deserializer.deserialize_articles_xml(article_xml)
 
+    total_articles = len(articles)
+    count = 0
+    threads = []
     for article in articles:
-        if database.get_article(article.get_article_id()) is None:
-            article = ArticlesAnalyser.analyse_article(article, database)
+        count += 1
+        added = False
+        while not added:
+            if len(threads) < 5:
+                thread = Thread(target=persist_article, args=(article, count, total_articles))
+                thread.start()
+                threads.append(thread)
+                added = True
+            else:
+                for thread in threads:
+                    if not thread.isAlive():
+                        threads.remove(thread)
+                time.sleep(1)
 
-            # persist article in database
-            print("New article added: id: {0}, version: {1}, date: {2}, source: {3}, title: {4}, url: {5}".format(
-                article.get_article_id(), article.get_version(), article.get_date(), article.get_source(),
-                article.get_title(), article.get_url()
-            ))
-            persist_inv_index(article)
-            articles_statistic = ArticlesAnalyser.get_article_statistic(article)
-            database.add_articles_statistic(articles_statistic)
-        else:
-            print("Article with id {0} already in database.".format(article.get_article_id()))
+
+def persist_article(article, count, total_articles):
+    if database.get_article(article.get_article_id()) is None:
+        article = ArticlesAnalyser.analyse_article(article, database)
+
+        # persist article in database
+        print("{0}/{1} ({2}%): New article added: id: {3}, version: {4}, date: {5}, source: {6}, title: {7}, url: {8}".format(
+            count, total_articles, math.floor(count / total_articles * 10000) / 100, article.get_article_id(),
+            article.get_version(), article.get_date(), article.get_source(),
+            article.get_title(), article.get_url()
+        ))
+
+        database.insert_article(article)
+        persist_inv_index(article)
+        articles_statistic = ArticlesAnalyser.get_article_statistic(article)
+        database.add_articles_statistic(articles_statistic)
+    else:
+        print("{0}/{1} ({2}%): Article with id {3} already in database.".format(
+            count, total_articles, math.floor(count / total_articles * 10000) / 100, article.get_article_id()))
+
 
 
 def list_words(article_id):
@@ -147,30 +175,42 @@ def list_stats():
         print("\t{0}: {1}".format(word, words[word]))
 
 
-def persist_inv_index():
+def persist_inv_index(article):
+    persisted_words = []
+    total_words = len(article.get_stems())
+    for word in article.get_stems():
+        if word in persisted_words:
+            continue
 
-    article_words = []
-    #term_frequency = 0
+        count = 0
+        for other_word in article.get_stems():
+            if word == other_word:
+                count += 1
+        tf = count / total_words
+        post = {'article_id': article.get_article_id(), 'tf': tf}
+        database.add_post(word, post)
+        persisted_words.append(word)
+
 
 
     #for article in database.get_articles():
         #start word um dopplung zu vermeiden
-    for article in database.get_articles_range(1,10):
-        start_word = 0
-        for word_a in article.get_stems():
-            post = []
-            start_word = start_word +1
-            if word_a not in article_words:
-                article_words.append(word_a)
-                counter = 1
-                for word_b in article.get_stems()[start_word:]:
-                    if word_a == word_b:
-                        counter = counter +1
-
-                term_frequency = counter / len(article.get_stems())
-                post.append(article.get_article_id())
-                post.append(term_frequency)
-                database.add_inverted_index(word_a, post)
+    # for article in database.get_articles_range(1,10):
+    #     start_word = 0
+    #     for word_a in article.get_stems():
+    #         post = []
+    #         start_word = start_word +1
+    #         if word_a not in article_words:
+    #             article_words.append(word_a)
+    #             counter = 1
+    #             for word_b in article.get_stems()[start_word:]:
+    #                 if word_a == word_b:
+    #                     counter = counter +1
+    #
+    #             term_frequency = counter / len(article.get_stems())
+    #             post.append(article.get_article_id())
+    #             post.append(term_frequency)
+    #             database.add_inverted_index(word_a, post)
 
 def leon():
     #TRAINIERTES MODEL WIRD ERZEUGT

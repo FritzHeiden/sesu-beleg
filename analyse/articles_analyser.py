@@ -14,18 +14,18 @@ class ArticlesAnalyser:
 
     @staticmethod
     def get_articles_statistic(articles):
-        sources = Counter.count_article_sources(articles)
-        words = {}
-        for article in articles:
-            article_words = article.get_words()
-            for word in article_words:
-                if word in words:
-                    words[word] = words[word] + article_words[word]
-                else:
-                    words[word] = article_words[word]
+        # sources = Counter.count_article_sources(articles)
+        # words = {}
+        # for article in articles:
+        #     article_words = article.get_words()
+        #     for word in article_words:
+        #         if word in words:
+        #             words[word] = words[word] + article_words[word]
+        #         else:
+        #             words[word] = article_words[word]
 
         article_count = len(articles)
-        return ArticlesStatistic(sources, words, article_count)
+        return ArticlesStatistic(article_count=article_count)
 
     @staticmethod
     def get_duplicates(signatures, reference_signature):
@@ -41,11 +41,9 @@ class ArticlesAnalyser:
     def analyse_article(article=None, database=None):
         # analyse words from content and add them to the article object
         words = TextAnalyser.analyse_words(article.get_content())
-        article.set_words(Counter.count_words(words))
-        stop_words = TextAnalyser.analyse_stop_words(article.get_content())
-        article.set_stop_words(Counter.count_words(stop_words))
+        # stop_words = TextAnalyser.analyse_stop_words(article.get_content())
+        # article.set_stop_words(Counter.count_words(stop_words))
         article.add_stems(Stemmer.get_stems(words))
-        SearchEngineDatabase.insert_article(database,article)
 
         # create stems from words and add them to the article object
 

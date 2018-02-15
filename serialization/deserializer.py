@@ -72,10 +72,10 @@ class Deserializer:
         source = article_json["source"]
         title = article_json["title"]
         url = article_json["url"]
-        words = article_json["words"]
-        stop_words = article_json["stop_words"]
+        # words = article_json["words"]
+        # stop_words = article_json["stop_words"]
         stems = article_json["stems"]
-        return Article(article_id, version, content, date, source, title, url, words, stems, stop_words)
+        return Article(article_id, version, content, date, source, title, url, stems=stems)
 
     @staticmethod
     def deserialize_articles_json(articles_json):
