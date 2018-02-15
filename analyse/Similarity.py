@@ -7,12 +7,11 @@ class Similarity:
     def train(articles):
         sentences = []
         for article in articles:
-            sentences.append(article.get_stems())
+            for i in range(0, len(article.get_stems()) - 5):
+                sentences.append(article.get_stems()[i:i+5])
 
         # model = Word2Vec(sentences,size=100, window=5, min_count=5)
-        print("1")
         model = Word2Vec(sentences, min_count=1)
-        print("2")
         model.save("trained.model")
         print(sentences)
 
