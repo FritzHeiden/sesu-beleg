@@ -34,7 +34,7 @@ class AND:
         #articel_id  = list(a.values())[1][0]['article_id']
         ### ALTER INDEX#####################################################################################
 
-        
+
         ### NEUER INDEX#####################################################################################
         for word in word_list:
             posts = self.database.get_posts(word)

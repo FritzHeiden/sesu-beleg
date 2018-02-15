@@ -245,9 +245,14 @@ def model_train():
         articles.append(article)
     Similarity.train(articles)
 
+<<<<<<< HEAD
+def leon():
+    #print(Similarity.similarity("füllen","felder"))
+=======
 
 def leon():
     # print(Similarity.similarity("füllen","felder"))
+>>>>>>> 48f0364341e5d7a38b9a7d187397230424a675da
 
     wortliste = ["eins", "zwei", "drei"]
     print(AND.AND(wortliste))
