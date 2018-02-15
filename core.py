@@ -21,7 +21,7 @@ test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
 test_data_url = "http://daten.datenlabor-berlin.de/newspart1.xml"
 
 # mongodb connection information
-mongodb_host = "127.0.0.1"
+mongodb_host = "spadi8.f4.htw-berlin.de"
 # mongodb_host = "localhost"
 mongodb_port = 28018
 mongodb_db_name = "search_engine"
@@ -215,12 +215,15 @@ def persist_inv_index(article):
     #             post.append(term_frequency)
     #             database.add_inverted_index(word_a, post)
 
+def model_train():
+    # TRAINIERTES MODEL WIRD ERZEUGT
+    articles = []
+    for article in database.get_articles():
+         articles.append(article)
+    Similarity.train(articles)
+
 def leon():
-    #TRAINIERTES MODEL WIRD ERZEUGT
-    #articles = []
-    #for article in database.get_articles():
-        #articles.append(article)
-    #Similarity.train(articles)
+
 
     #print(Similarity.similarity("füllen","felder"))
 
@@ -256,6 +259,8 @@ while close_requested is not True:
         list_top_words(command[1], command[2])
     elif command[0] == "s" or command[0] == "stats":
         list_stats()
+    elif command[0] == "model_train":
+        model_train()
     elif command[0] == "leon":
         leon()
     elif command[0] == "inv":
