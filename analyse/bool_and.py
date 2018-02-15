@@ -36,32 +36,28 @@ class AND:
 
 
         ### NEUER INDEX#####################################################################################
+        start_list = []
+        posts = self.database.get_posts(word_list.split()[0])
+        for post in posts:
+                start_list.append(post['article_id'])
+        print(start_list)
+
+        no_hit = []
         for word in word_list.split():
+            compare_list = []
             posts = self.database.get_posts(word)
-            #print(posts)
-            print(posts[1]['article_id'])
-
-        dic_list = [] #liste Aller Dicts die auch in Wortliste vorhanden sind
-        for word in word_list:
-            for dict in index:
-                if word == list(dict.values())[0]:
-                    dic_list.append(dict)
-        #print(dic_list)
-
-        start_liste = [] # liste aller Artikel in denen das erste Wort aus wortliste vorkommt
-        for i in range(0, len(list(dic_list[0].values())[1])):
-            start_liste.append(list(dic_list[0].values())[1][i]['article_id'])
-        #print(start_liste)
-        no_hit = [] # liste aller Artikel die zwar im ersten Wort vorkommen aber dannach nicht immer
-        for i in range (0,len(dic_list)):
-            vergleichs_liste = [] # liste aller weiteren wörter aus der Wortliste wird mit der startliste verglichen
-            for x in range(0, len(list(dic_list[i].values())[1])):
-                vergleichs_liste.append(list(dic_list[i].values())[1][x]['article_id'])
-            #print (vergleichs_liste)
-            for element in start_liste:
-                if element not in vergleichs_liste:
+            for post in posts:
+                compare_list.append(post['article_id'])
+            print(compare_list)
+            for element in start_list:
+                if element not in compare_list:
                     no_hit.append(element)
 
-        gemeinsame = list(set(start_liste) - set(no_hit)) # liste aller gemeinsamer artikeln
-        #return gemeinsame
+        for element in start_list:
+            if element not in no_hit:
+                no_hit.append(element)
+
+        print (no_hit)
+        list = []
+        return list
         ### NEUER INDEX#####################################################################################
