@@ -183,7 +183,7 @@ def leon():
     print(Similarity.similarity("füllen","felder"))
 
 def emil():
-    print(database.get_inverted_index(Stemmer.single_stem("Merkel")))
+    print(database.get_inverted_index(Stemmer.single_stem("matthia")))
 
 print("= Article Database =")
 print("Enter h or help to list commands")
