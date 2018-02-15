@@ -36,10 +36,10 @@ class AND:
 
 
         ### NEUER INDEX#####################################################################################
-        for word in word_list:
+        for word in word_list.split():
             posts = self.database.get_posts(word)
             #print(posts)
-            print (posts[1]['article_id'])
+            print(posts[1]['article_id'])
 
         dic_list = [] #liste Aller Dicts die auch in Wortliste vorhanden sind
         for word in word_list:
