@@ -44,11 +44,11 @@ class ArticlesAnalyser:
         article.set_words(Counter.count_words(words))
         stop_words = TextAnalyser.analyse_stop_words(article.get_content())
         article.set_stop_words(Counter.count_words(stop_words))
-
+        article.add_stems(Stemmer.get_stems(words))
         SearchEngineDatabase.insert_article(database,article)
 
         # create stems from words and add them to the article object
-        article.add_stems(Stemmer.get_stems(words))
+
 
         # Generate Shingles from stop words
         #shingles = ShingleGenerator.generate_stop_word_shingles(article.get_content())

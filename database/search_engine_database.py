@@ -23,6 +23,7 @@ class SearchEngineDatabase:
         self._db = self._client["search_engine"]
         self._article_collection = self._db["articles"]
         self._statistics_collection = self._db["statistics"]
+        self._inverted_index_collection = self._db["inverted_index"]
 
     # inserts an article if its not present in the db
     def insert_article(self, article):
@@ -33,6 +34,8 @@ class SearchEngineDatabase:
         # execute query; if document is present, it is being updated; upsert true causes mongodb to insert article if
         # its not present
         return self._article_collection.update(query, document, upsert=True)["updatedExisting"]
+
+
 
     # find an article by its article id
     def get_article(self, article_id):
@@ -92,6 +95,30 @@ class SearchEngineDatabase:
             return None
 
         return Deserializer.deserialize_articles_statistic(articles_statistic_json)
+
+
+    def add_inverted_index(self, word, post):
+
+        if self.get_inverted_index(word) is not None:
+            post_tmp = post
+            post = self.get_inverted_index(word)
+            post.append(post_tmp)
+
+        inv_index = Serializer.serialize_inverted_index(word, post)
+
+        #return self._inverted_index_collection.update(word, post, upsert=True)["updatedExisting"]
+        return self._inverted_index_collection.update({"word" : word},{"post" : post}, upsert=True)["updatedExisting"]
+
+
+    def get_inverted_index(self, word):
+        inv_index = self._inverted_index_collection.find_one({"word": word})
+        if inv_index is not None:
+            return Deserializer.deserialize_inverted_index(inv_index)
+        else:
+            return None
+
+
+
 
     def add_shingles(self, shingles):
         # ToDo implement add_shingles
