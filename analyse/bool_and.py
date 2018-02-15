@@ -38,7 +38,8 @@ class AND:
         ### NEUER INDEX#####################################################################################
         for word in word_list:
             posts = self.database.get_posts(word)
-
+            #print(posts)
+            print (posts[1]['article_id'])
 
         dic_list = [] #liste Aller Dicts die auch in Wortliste vorhanden sind
         for word in word_list:
@@ -62,5 +63,5 @@ class AND:
                     no_hit.append(element)
 
         gemeinsame = list(set(start_liste) - set(no_hit)) # liste aller gemeinsamer artikeln
-        return gemeinsame
+        #return gemeinsame
         ### NEUER INDEX#####################################################################################
