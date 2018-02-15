@@ -10,6 +10,7 @@ from database.search_engine_database import SearchEngineDatabase
 from network.url_helper import UrlHelper
 from serialization.deserializer import Deserializer
 from analyse.Similarity import Similarity
+from analyse.bool_and import AND
 
 # data source
 test_data_url = "http://daten.datenlabor-berlin.de/test.xml"
@@ -174,13 +175,16 @@ def persist_inv_index():
 
 def leon():
     #TRAINIERTES MODEL WIRD ERZEUGT
-    articles = []
-    for article in database.get_articles():
-        articles.append(article)
-    Similarity.train(articles)
+    #articles = []
+    #for article in database.get_articles():
+        #articles.append(article)
+    #Similarity.train(articles)
 
+    #print(Similarity.similarity("füllen","felder"))
 
-    print(Similarity.similarity("füllen","felder"))
+    wortliste = ["eins","zwei","drei"]
+    print(AND.AND(wortliste))
+
 
 def emil():
     print(database.get_inverted_index(Stemmer.single_stem("matthia")))
