@@ -2,6 +2,7 @@ import sys
 import math
 import time
 
+
 from threading import Thread
 
 from analyse.articles_analyser import ArticlesAnalyser
@@ -29,7 +30,7 @@ mongodb_db_name = "search_engine"
 # initialize database
 database = SearchEngineDatabase(mongodb_host, mongodb_port)
 
-file = open("./stop_words", "r")
+file = open("./stop_words", "r", errors='ignore')
 text = file.read()
 file.close()
 text_split = text.split("\n")
