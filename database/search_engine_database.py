@@ -98,6 +98,7 @@ class SearchEngineDatabase:
 
 
     def add_inverted_index(self, word, post):
+
         if self.get_inverted_index(word) is not None:
             post_tmp = post
             post = self.get_inverted_index(word)
@@ -105,11 +106,12 @@ class SearchEngineDatabase:
 
         inv_index = Serializer.serialize_inverted_index(word, post)
 
-        return self._inverted_index_collection.update(word, post, upsert=True)["updatedExisting"]
+        #return self._inverted_index_collection.update(word, post, upsert=True)["updatedExisting"]
+        return self._inverted_index_collection.update({"word" : word},{"post" : post}, upsert=True)["updatedExisting"]
 
 
     def get_inverted_index(self, word):
-        inv_index = self._inverted_index_collection.find_one({"word":word})
+        inv_index = self._inverted_index_collection.find_one({"word": word})
         if inv_index is not None:
             return Deserializer.deserialize_inverted_index(inv_index)
         else:

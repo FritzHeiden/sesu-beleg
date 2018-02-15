@@ -147,7 +147,7 @@ def list_stats():
         print("\t{0}: {1}".format(word, words[word]))
 
 
-def persist_inv_index(article):
+def persist_inv_index():
 
     article_words = []
     #term_frequency = 0
@@ -155,21 +155,22 @@ def persist_inv_index(article):
 
     #for article in database.get_articles():
         #start word um dopplung zu vermeiden
-    start_word = 0
-    for word_a in article.get_stems():
-        post = []
-        start_word = start_word +1
-        if word_a not in article_words:
-            article_words.append(word_a)
-            counter = 1
-            for word_b in article.get_stems()[start_word:]:
-                if word_a == word_b:
-                    counter = counter +1
+    for article in database.get_articles_range(1,10):
+        start_word = 0
+        for word_a in article.get_stems():
+            post = []
+            start_word = start_word +1
+            if word_a not in article_words:
+                article_words.append(word_a)
+                counter = 1
+                for word_b in article.get_stems()[start_word:]:
+                    if word_a == word_b:
+                        counter = counter +1
 
-            term_frequency = counter / len(article.get_stems())
-            post.append(article.get_article_id)
-            post.append(term_frequency)
-            database.add_inverted_index(word_a, post)
+                term_frequency = counter / len(article.get_stems())
+                post.append(article.get_article_id())
+                post.append(term_frequency)
+                database.add_inverted_index(word_a, post)
 
 def leon():
     #TRAINIERTES MODEL WIRD ERZEUGT
@@ -179,6 +180,9 @@ def leon():
     Similarity.train(articles)
 
     print(Similarity.similarity("übertragen","versenden"))
+
+def emil():
+    print(database.get_inverted_index(Stemmer.single_stem("Merkel")))
 
 print("= Article Database =")
 print("Enter h or help to list commands")
@@ -207,5 +211,9 @@ while close_requested is not True:
         list_stats()
     elif command[0] == "leon":
         leon()
+    elif command[0] == "inv":
+        persist_inv_index()
+    elif command[0] == "emil":
+        emil()
     else:
         print("Unknown command '{0}'. Enter h or help for command list".format(command))
