@@ -82,16 +82,23 @@ def list_articles(count, start_position):
 def find_articles(query):
     print("Finding articles for query '{0}':".format(query))
     andEvaluator = AND(database)
-    articles = andEvaluator.AND(query)
+    article_ids = andEvaluator.AND(query)
 
-    inverted_index = InvertedIndex(database)
+    print(article_ids)
 
+    articles = database.get_articles(article_ids)
+
+    total = len(articles)
+    count = 0
     results = []
     for article in articles:
-        cos_sim = Similarity.cosine_similarity(query, article, inverted_index)
-        soft_cos_sim = Similarity.soft_cosine_similarity(query, article, inverted_index)
+        cos_sim = Similarity.cosine_similarity(query, article, database)
+        soft_cos_sim = 0
+        # soft_cos_sim = Similarity.soft_cosine_similarity(query, article, database)
         results.append({"cos_sim": cos_sim, "soft_cos_sim": soft_cos_sim, "title": article.get_title(),
                         "id": article.get_article_id()})
+        count += 1
+        print("{0}% ({1}/{2}): Cos Sim: {3}".format(math.floor(count / total * 10000)/100, count, total, cos_sim))
 
     results = sorted(results, key=lambda k: k['cos_sim'], reverse=True)
 

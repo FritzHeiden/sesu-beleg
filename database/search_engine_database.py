@@ -1,3 +1,4 @@
+import math
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 
@@ -35,8 +36,6 @@ class SearchEngineDatabase:
         # its not present
         self._article_collection.insert(document)
 
-
-
     # find an article by its article id
     def get_article(self, article_id):
         # execute query with criteria article_id
@@ -53,9 +52,13 @@ class SearchEngineDatabase:
         return len(document) > 0
 
     # gets all articles present in the database
-    def get_articles(self):
+    def get_articles(self, article_ids=None):
         # execute query
-        documents = self._article_collection.find()
+        if article_ids is None:
+            documents = self._article_collection.find()
+        else:
+            documents = self._article_collection.find({"article_id": {"$in": article_ids}})
+
         articles = []
         for document in documents:
             # deserialize articles and add them to the array
@@ -101,20 +104,19 @@ class SearchEngineDatabase:
 
         return Deserializer.deserialize_articles_statistic(articles_statistic_json)
 
-
     def add_inverted_index(self, word, post):
 
         if self.get_inverted_index(word) is not None:
-            #print("hallo")
+            # print("hallo")
             post_tmp = post
             post = self.get_inverted_index(word)
             post.append(post_tmp)
 
         inv_index = Serializer.serialize_inverted_index(word, post)
 
-        #return self._inverted_index_collection.update(word, post, upsert=True)["updatedExisting"]
-        return self._inverted_index_collection.update({"word" : word},{"word" : word, "post" : post}, upsert=True)["updatedExisting"]
-
+        # return self._inverted_index_collection.update(word, post, upsert=True)["updatedExisting"]
+        return self._inverted_index_collection.update({"word": word}, {"word": word, "post": post}, upsert=True)[
+            "updatedExisting"]
 
     def get_inverted_index(self, word):
         inv_index = self._inverted_index_collection.find_one({"word": word})
@@ -135,6 +137,25 @@ class SearchEngineDatabase:
             return None
         return result[0]["posts"]
 
+    def get_term_frequencies(self, words, article_id):
+        results = self._inverted_index_collection.find({"word": {"$in": words}})
+        tfs = []
+        for result in results:
+            for post in result["posts"]:
+                if post["article_id"] == article_id:
+                    tfs.append({"word": result["word"], "tf": post["tf"]})
+        return tfs
+
+    def get_inverted_document_frequencies(self, words):
+        results = self._inverted_index_collection.find({"word": {"$in": words}})
+        idfs = []
+        total_article_count = self._statistics_collection.find_one({"id": "articles_statistic"})["article_count"]
+
+        for result in results:
+            article_containing_word_count = len(result["posts"])
+            idfs.append({"word": result["word"], "idf": math.log(total_article_count / article_containing_word_count)})
+
+        return idfs
 
     def add_shingles(self, shingles):
         # ToDo implement add_shingles
